@@ -6,6 +6,31 @@ const Button = ({name, handleClick}) => {
   )
 }
 
+const Average = ({good, neutral, bad}) => {
+  const total = good + neutral + bad
+  if (total == 0)
+    return (
+      <p>Average: 0</p>
+    )
+  else{
+    return(
+      <p>Average: {(good - bad) / total}</p>
+    )
+  }
+}
+
+const Positive = ({good, neutral, bad}) => {
+  const total = good + neutral + bad
+  if (total == 0)
+    return (
+      <p>Positive: 0%</p>
+    )
+  else{
+    return(
+      <p>Positive: {(good + neutral) / total * 100}%</p>
+    )
+  }
+}
 const App = () => {
   // save clicks of each button to its own state
   const [good, setGood] = useState(0)
@@ -22,6 +47,9 @@ const App = () => {
       <p>Good: {good}</p>
       <p>Neutral: {neutral}</p>
       <p>Bad: {bad}</p>
+      <p>Total:{good + neutral + bad}</p>
+      <Average good={good} neutral={neutral} bad={bad}/>
+      <Positive good={good} neutral={neutral} bad={bad}/>
     </div>
   )
 }
