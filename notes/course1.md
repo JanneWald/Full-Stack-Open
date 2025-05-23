@@ -44,3 +44,28 @@ const m2 = t.map(value => '<li>' + value + '</li>')
 console.log(m2)  
 // [ '<li>1</li>', '<li>2</li>', '<li>3</li>' ] is printed
 ```
+
+#### Objects
+- Object literals by listing properties within braces.
+```js
+const object1 = {
+  name: 'Arto Hellas',
+  age: 35,
+  education: 'PhD',
+}
+```
+- Properties can be added at will
+
+#### Functions
+- All functions are lambdas
+```js
+const sum = (p1, p2) => {
+  console.log(p1)
+  console.log(p2)
+  return p1 + p2
+}
+```
+- No parentheses needed if only one parameter
+- No bracket/extra lines if return is a singular expression
+- Technically can use `function funcName(a, b){return ...}` but its lame
+
