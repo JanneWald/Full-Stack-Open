@@ -25,6 +25,11 @@ const App = () => {
   const [selected, setSelected] = useState(0)
   // Make a list
   const [votes, setVotes] = useState(() => anecdotes.map(() => 0))
+  // Highest vote frequency
+  const [popular_freq, setFreq] = useState(0)
+  // Highest vote index
+  const [popular, setPopular] = useState(0)
+
 
   console.log(votes)
 
@@ -39,6 +44,13 @@ const App = () => {
     votes[selected] += 1
     const new_votes={...votes, selected: votes[selected] + 1}
     setVotes(new_votes)
+
+    // Keep track of highest anecdote
+    if(votes[selected] > popular_freq){
+      console.log(popular, "is the most popular index with a count of", popular_freq)
+      setPopular(selected)
+      setFreq(votes[selected])
+    }
   }
   
   const quote = anecdotes[selected]
@@ -46,11 +58,15 @@ const App = () => {
   console.log(votes)
   return (
     <div>
+      <h1>Anecdote of the day</h1>
       {anecdotes[selected]}
+      has {votes[selected]} votes
       <Button name="Next anecdote" handleClick={handleNext}/>
-      {votes[selected]}
       <Button name="Vote" handleClick={handleVote}/>
+      <h1>Most voted anecdote</h1>
+      {anecdotes[popular]}
     </div>
+
   )
 }
 
