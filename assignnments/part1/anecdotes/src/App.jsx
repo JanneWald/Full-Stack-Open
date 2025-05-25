@@ -30,7 +30,7 @@ const App = () => {
   // Highest vote index
   const [popular, setPopular] = useState(0)
 
-
+  
   console.log(votes)
 
     const handleNext = () =>{
