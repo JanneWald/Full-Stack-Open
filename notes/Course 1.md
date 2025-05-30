@@ -3,7 +3,7 @@
 #### Variables
 `let` - makes normal variable
 `const` - makes an immutable variable
-`var` - usable interchangable
+`var` - usable interchangeable
 
 #### Arrays
 Construct like normal
@@ -32,7 +32,7 @@ console.log(t)  // [1, -1, 3] is printed
 console.log(t2) // [1, -1, 3, 5] is printed
 ```
 
-'map' creates a variable from a foreach
+`map` saves a new a list from a for each command
 ```js
 const t = [1, 2, 3]
 
