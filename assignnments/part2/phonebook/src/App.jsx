@@ -9,18 +9,23 @@ const App = () => {
   const updatePerson = (event) => {
     event.preventDefault()
     console.log(event.type)
-    console.log(event.target)
     console.log(event.target.value)
     setNewName(event.target.value)
   }
 
   const addPerson = (event) =>{
     event.preventDefault()
+    if (persons.find(person => person.name === newName)){
+      // use ` backticks for string templates
+      alert(`Not so fast, ${newName} is already in the phonebook`)
+    }
+    else{
+      setPersons(persons.concat({name: newName}))
+    }
     setNewName('')
-    setPersons(persons.concat({name: newName}))
-    console.log('yo')
   }
-  console.log(persons)
+
+  console.log("Persons", persons)
   return (
     <div>
       <div>debug: {newName}</div>
