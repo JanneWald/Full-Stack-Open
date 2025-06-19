@@ -169,6 +169,7 @@ const App = () => {
   // ...
 }
 ```
-- Effects have 2 params, the function to be called, and the effect itself
+- This example gets data from the server, which happens async
+- Effects have 2 params, the function to be called, and how often effect is run
 	- `[]` means run only once on first render
 	- Otherwise it would go on forever

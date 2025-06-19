@@ -1,36 +1,37 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 import Persons from './components/Persons'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456', id: 1 },
-    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
-  ])
+  
+  const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [personFilter, setPersonFilter] = useState('')
 
+  // Event handler to update filter field
   const updateFilter = (event) => {
     event.preventDefault()
     console.log("Updated filter", event.target.value)
     setPersonFilter(event.target.value)
   }
 
+  // Event handler to update person field
   const updatePerson = (event) => {
     event.preventDefault()
     console.log("Updated name", event.target.value)
     setNewName(event.target.value)
   }
 
+  // Event handler to update number field 
   const updateNumber = (event) =>{
     event.preventDefault()
     console.log("Updated number", event.target.value)
     setNewNumber(event.target.value)
   }
 
+  // Adds person to json assuming its new in phonebook
   const addPerson = (event) =>{
     event.preventDefault()
     if (persons.find(person => person.name === newName)){
@@ -44,6 +45,7 @@ const App = () => {
     setNewNumber('')
   }
 
+  // Returns persons with given filter
   const getPersons = () => {
     if(personFilter === '')
       return persons
@@ -52,6 +54,18 @@ const App = () => {
         person => person.name.toLowerCase().includes(personFilter.toLowerCase()) 
       )
   }
+
+  // Effect to get json of persons from server
+  useEffect(() => {
+    console.log("Json server effect")
+
+    axios
+      .get("http://localhost:3001/persons").then(response => {
+        console.log("Promise Fulfilled with data:")
+        console.log(response.data)
+        setPersons(response.data)
+      })
+  }, [])
 
   console.log("Persons", persons)
   return (
