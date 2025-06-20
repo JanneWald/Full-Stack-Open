@@ -173,3 +173,25 @@ const App = () => {
 - Effects have 2 params, the function to be called, and how often effect is run
 	- `[]` means run only once on first render
 	- Otherwise it would go on forever
+
+## Manipulating Data from Server
+#### Rest
+- In REST, indivdual objects are *resources*
+- You can access these resources by using the url and its id like: `localhost:3001/notes/3` to get the notes with id of 3
+	- Recieving uses `HTTP GET`
+	- Sending uses `HTTP POST`
+#### Sending data to server
+```jsx
+addNote = event => {
+  event.preventDefault()
+  const noteObject = {
+    content: newNote,
+    important: Math.random() < 0.5,
+  }
+  axios    
+  	.post('http://localhost:3001/notes', noteObject)
+	.then(response => {
+		console.log(response)
+	})}
+```
+- Get
