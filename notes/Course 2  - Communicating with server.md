@@ -103,6 +103,11 @@ const notesToShow = showAll
 	- Create file: `db.json` in root directory fill with jsons... notes:
 	- Start server with `npx json--server -port 3001 db.json`
 	- You can view data at `http://localhost:3001/notes`
+```bash
+npm install axios
+npm install json-server --save-dev
+npm run server
+```
 #### Browser as runtime env
 - Browsers are all single threader
 	- do not have an infinite loop or you will cash
@@ -194,4 +199,4 @@ addNote = event => {
 		console.log(response)
 	})}
 ```
-- Get
+- Get together

@@ -21,5 +21,5 @@
       "id": "4"
     }
   ],
-  "notPersons": ["you can view with localhost:3001/notPersons, each root level field is website"]
+  "notPersons": [{"note": "you can view with localhost:3001/notPersons, each root level field is website"}]
 }
