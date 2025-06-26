@@ -103,17 +103,26 @@ const notesToShow = showAll
 	- Create file: `db.json` in root directory fill with jsons... notes:
 	- Start server with `npx json--server -port 3001 db.json`
 	- You can view data at `http://localhost:3001/notes`
-```bash
-npm install axios
-npm install json-server --save-dev
-npm run server
-```
 #### Browser as runtime env
 - Browsers are all single threader
 	- do not have an infinite loop or you will cash
 - `npm` or Node Package Manager has *axios fetch*
 - install in root of directory with `npm install axios`
 	- should see in dependencies in `package.json`
+
+```bash
+npm install axios
+npm install json-server --save-dev
+```
+
+Add to `scripts` part in package.json
+```json
+    "server": "json-server -p 3001 db.json"
+```
+Now can easily run 
+```bash
+npm run server
+```
 #### Axios
 - with json server and site running, get data like:
 ```jsx
@@ -199,4 +208,74 @@ addNote = event => {
 		console.log(response)
 	})}
 ```
-- Get together
+- Can change parts of json with `PATCH` instead of `POST`
+```jsx
+const toggleImportanceOf = id => {
+  const url = `http://localhost:3001/notes/${id}`
+  const note = notes.find(n => n.id === id)
+
+  // Make copy, changing only important field with "object spreading"
+  const changedNote = { ...note, important: !note.important }
+
+  // Update notes with new notes
+  axios.put(url, changedNote).then(response => {
+    setNotes(notes.map(note => note.id === id ? response.data : note))
+  })
+}
+```
+
+#### Extracting Communication
+- Simplify the posts/gets for notes in a service file called: /src/services/notes.js
+```jsx
+import axios from 'axios'
+const baseUrl = 'http://localhost:3001/notes'
+
+const getAll = () => {
+  return axios.get(baseUrl)
+}
+
+const create = newObject => {
+  return axios.post(baseUrl, newObject)
+}
+
+const update = (id, newObject) => {
+  return axios.put(`${baseUrl}/${id}`, newObject)
+}
+
+
+// K/V pair, if same name could use: export default { getAll, create, update }
+export default { 
+  getAll: getAll, 
+  create: create, 
+  update: update 
+}
+```
+- Updated version to only return a promise
+```jsx
+const getAll = () => {
+  const request = axios.get(baseUrl)
+  return request.then(response => {    return response.data  })}
+```
+#### Promises and Errors
+- What is user changes db value that has been removed
+- Need to handle error
+- Can do with another `then()`
+Use `catch()` after a promse
+```jsx
+axios
+  .get('http://example.com/probably_will_fail')
+  .then(response => {
+    console.log('success!')
+  })
+  .catch(error => {
+    console.log('fail')
+  })
+```
+- Multiple promises are a *promise chain*
+- Use catch() at end of promise chain
+```jsx
+.catch(error => {
+	alert(`the note '${note.content}' was already deleted from server`
+	setNotes(notes.filter(n => n.id !== id))   // Return any notes that wernt a problem child 
+})
+```

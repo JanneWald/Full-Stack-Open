@@ -38,8 +38,17 @@ const App = () => {
       // use ` backticks for string templates
       alert(`Not so fast, ${newName} is already in the phonebook`)
     }
+
     else{
-      setPersons(persons.concat({name: newName, number:newNumber}))
+      // Setting var name to desired field lets you shortcut name: newName
+      const name = newName
+      const number = newNumber
+      const id = `${persons.length}`
+      const phonebookObject = {name, number, id}
+      axios
+        .post("http://localhost:3001/persons", phonebookObject)
+        .then(response => console.log(response))
+      setPersons(persons.concat({name, number}))
     }
     setNewName('')
     setNewNumber('')
