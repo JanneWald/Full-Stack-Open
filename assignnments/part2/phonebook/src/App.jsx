@@ -47,13 +47,34 @@ const App = () => {
     console.log('Removed person, update list:')
     console.log(persons)
   }
-  
+
   // Adds person to json assuming its new in phonebook
   const addPerson = (event) =>{
     event.preventDefault()
-    if (persons.find(person => person.name === newName)){
+    const previousEntry = persons.find(person => person.name === newName)
+    if (previousEntry){
       // use ` backticks for string templates
-      alert(`Not so fast, ${newName} is already in the phonebook`)
+      if(confirm(`${previousEntry.name} is already in phonebook, would you like to update it?`)){
+        phoneService
+          .update(previousEntry, newNumber)
+          .then(
+            response => {
+              console.log('updating names')
+              console.log(persons)
+              setPersons(persons.map(person => {
+                if(person.id === previousEntry.id){
+                  return response
+                }
+                else{
+                  return person
+                }
+              }))
+              console.log('updated names')
+              console.log(persons)
+            }
+          )
+          .catch(error => console.log('error updating person'))
+      }
     }
 
     else{
@@ -63,6 +84,7 @@ const App = () => {
       phoneService
         .add(name, number)
         .then(response => setPersons(persons.concat(response)))
+        .catch(error => console.log('error adding person'))
     }
     
     setNewName('')
@@ -85,6 +107,8 @@ const App = () => {
     phoneService
       .getAll()
       .then(response => {setPersons(response)})
+      .catch(error => console.log('error getting from db'))
+
   }, [])
 
   console.log("Persons: ", persons)

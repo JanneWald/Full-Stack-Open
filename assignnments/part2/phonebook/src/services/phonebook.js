@@ -28,4 +28,14 @@ const remove = (id) => {
         })
 }
 
-export default {getAll, add, remove}
+const update = (previousEntry, newNumber) => {
+    const newEntry = {...previousEntry, "number": newNumber}
+    return axios
+        .put(`${url}/${previousEntry.id}`, newEntry)
+        .then(response => {
+            console.log(response)
+            return response.data
+        })
+}
+
+export default {getAll, add, remove, update}
