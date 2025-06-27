@@ -79,7 +79,12 @@ const App = () => {
           .then(setMessage(`Updated ${previousEntry.name}'s number`))
           .then(setColor('purple'))
           .then(setTimeout(() => setMessage(""), 5000))
-          .catch(error => console.log('error updating person'))
+          .catch(error => {
+            setColor('red')
+            setMessage(`${previousEntry.name} was recently removed from db`)
+            setPersons(persons.filter(person => person.id != previousEntry.id))
+            setTimeout(() => setMessage(""), 5000)
+          })
       }
     }
 
@@ -93,7 +98,11 @@ const App = () => {
         .then(setMessage(`Added ${newName} to phonebook`))
         .then(setColor('green'))
         .then(setTimeout(() => setMessage(""), 5000))
-        .catch(error => console.log('error adding person'))
+        .catch(error => {
+          setColor('red')
+          setMessage(`Error POSTing ${newName} to db`)
+          setTimeout(() => setMessage(""), 5000)
+        })
     }
     
     setNewName('')
@@ -123,7 +132,7 @@ const App = () => {
   console.log("Persons: ", persons)
   return (
     <div>
-      <Message message={message} color={color} clearMessage={()=>setTimeout(setMessage(""), 5000)}/>
+      <Message message={message} color={color}/>
       <h2>Phonebook</h2>
       <Filter value={personFilter} onChange={updateFilter}/>
       <PersonForm newName={newName} updatePerson={updatePerson} newNumber={newNumber} updateNumber={updateNumber} addPerson={addPerson}/>
