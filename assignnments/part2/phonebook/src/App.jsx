@@ -13,6 +13,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [personFilter, setPersonFilter] = useState('')
   const [message, setMessage] = useState('')
+  const [color, setColor] = useState('green')
 
   // Event handler to update filter field
   const updateFilter = (event) => {
@@ -76,6 +77,7 @@ const App = () => {
             }
           )
           .then(setMessage(`Updated ${previousEntry.name}'s number`))
+          .then(setColor('purple'))
           .then(setTimeout(() => setMessage(""), 5000))
           .catch(error => console.log('error updating person'))
       }
@@ -89,6 +91,7 @@ const App = () => {
         .add(name, number)
         .then(response => setPersons(persons.concat(response)))
         .then(setMessage(`Added ${newName} to phonebook`))
+        .then(setColor('green'))
         .then(setTimeout(() => setMessage(""), 5000))
         .catch(error => console.log('error adding person'))
     }
@@ -120,7 +123,7 @@ const App = () => {
   console.log("Persons: ", persons)
   return (
     <div>
-      <Message message={message} />
+      <Message message={message} color={color} clearMessage={()=>setTimeout(setMessage(""), 5000)}/>
       <h2>Phonebook</h2>
       <Filter value={personFilter} onChange={updateFilter}/>
       <PersonForm newName={newName} updatePerson={updatePerson} newNumber={newNumber} updateNumber={updateNumber} addPerson={addPerson}/>

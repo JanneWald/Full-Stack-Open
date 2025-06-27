@@ -1,10 +1,11 @@
-const style = {
+
+const Message = ({message, color}) => {
+    const style = {
     'backgroundColor': 'lightgray',
-    'color': 'green',
+    'color': `${color}`,
     'fontStyle': 'italic'
 }
-
-const Message = ({message}) => {
+    
     if (message === null || message === ""){
         return
     }
@@ -15,6 +16,7 @@ const Message = ({message}) => {
             </div>
         )
     }
+    
 }
 
 export default Message
