@@ -257,25 +257,47 @@ const getAll = () => {
   return request.then(response => {    return response.data  })}
 ```
 #### Promises and Errors
-- What is user changes db value that has been removed
-- Need to handle error
-- Can do with another `then()`
+- What if user changes db value that has been removed?
+  - Need to handle error
+- Use command `then()`
+  - have lambda execute after succesful completion of promise, returns a new promise
+  - Multiple promises are a *promise chain*  
+
 Use `catch()` after a promse
-```jsx
+```jsx 
 axios
   .get('http://example.com/probably_will_fail')
   .then(response => {
     console.log('success!')
   })
   .catch(error => {
-    console.log('fail')
-  })
-```
-- Multiple promises are a *promise chain*
-- Use catch() at end of promise chain
-```jsx
-.catch(error => {
 	alert(`the note '${note.content}' was already deleted from server`
-	setNotes(notes.filter(n => n.id !== id))   // Return any notes that wernt a problem child 
-})
+	setNotes(notes.filter(n => n.id !== id))   // Return any notes that wernt a problem child   })
+```
+
+#### STYLING :3
+- Add file `src/index.css`
+- Add style and import in `main.jsx`
+```jsx
+import './index.css'
+```
+Inline styling for components:
+```jsx
+const Footer = () => {
+  const footerStyle = {
+    color: 'green',
+    fontStyle: 'italic'
+  }
+
+  return (
+    <div style={footerStyle}>
+      <br />
+      <p>
+        Note app, Department of Computer Science, University of Helsinki 2025
+      </p>
+    </div>
+  )
+}
+
+export default Footer
 ```

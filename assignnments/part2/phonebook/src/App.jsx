@@ -3,6 +3,7 @@ import axios from 'axios'
 import Persons from './components/Persons'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
+import Message from './components/Message.jsx'
 import phoneService from './services/phonebook.js'
 
 const App = () => {
@@ -11,6 +12,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [personFilter, setPersonFilter] = useState('')
+  const [message, setMessage] = useState('')
 
   // Event handler to update filter field
   const updateFilter = (event) => {
@@ -73,6 +75,8 @@ const App = () => {
               console.log(persons)
             }
           )
+          .then(setMessage(`Updated ${previousEntry.name}'s number`))
+          .then(setTimeout(() => setMessage(""), 5000))
           .catch(error => console.log('error updating person'))
       }
     }
@@ -84,6 +88,8 @@ const App = () => {
       phoneService
         .add(name, number)
         .then(response => setPersons(persons.concat(response)))
+        .then(setMessage(`Added ${newName} to phonebook`))
+        .then(setTimeout(() => setMessage(""), 5000))
         .catch(error => console.log('error adding person'))
     }
     
@@ -114,6 +120,7 @@ const App = () => {
   console.log("Persons: ", persons)
   return (
     <div>
+      <Message message={message} />
       <h2>Phonebook</h2>
       <Filter value={personFilter} onChange={updateFilter}/>
       <PersonForm newName={newName} updatePerson={updatePerson} newNumber={newNumber} updateNumber={updateNumber} addPerson={addPerson}/>
