@@ -3,6 +3,8 @@ import axios from 'axios'
 import Persons from './components/Persons'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
+import phoneService from './services/phonebook.js'
+
 const App = () => {
   
   const [persons, setPersons] = useState([])
@@ -25,12 +27,27 @@ const App = () => {
   }
 
   // Event handler to update number field 
-  const updateNumber = (event) =>{
+  const updateNumber = (event) => {
     event.preventDefault()
     console.log("Updated number", event.target.value)
     setNewNumber(event.target.value)
   }
 
+  // Event handler to remove person's id
+  const removePerson = (id) => {
+    const name = persons.find(person => person.id == id).name
+    if(!confirm(`Are you sure you want to remove ${name}`)){
+      console.log('Ignoring deletion')
+      return
+    }
+
+    console.log(`Sending ${id} to service for deletion`)
+    phoneService.remove(id)
+    setPersons(persons.filter(person => person.id !== id))
+    console.log('Removed person, update list:')
+    console.log(persons)
+  }
+  
   // Adds person to json assuming its new in phonebook
   const addPerson = (event) =>{
     event.preventDefault()
@@ -43,13 +60,11 @@ const App = () => {
       // Setting var name to desired field lets you shortcut name: newName
       const name = newName
       const number = newNumber
-      const id = `${persons.length}`
-      const phonebookObject = {name, number, id}
-      axios
-        .post("http://localhost:3001/persons", phonebookObject)
-        .then(response => console.log(response))
-      setPersons(persons.concat({name, number}))
+      phoneService
+        .add(name, number)
+        .then(response => setPersons(persons.concat(response)))
     }
+    
     setNewName('')
     setNewNumber('')
   }
@@ -64,26 +79,22 @@ const App = () => {
       )
   }
 
-  // Effect to get json of persons from server
+  // Effect to get json of persons from server, only once
   useEffect(() => {
     console.log("Json server effect")
-
-    axios
-      .get("http://localhost:3001/persons").then(response => {
-        console.log("Promise Fulfilled with data:")
-        console.log(response.data)
-        setPersons(response.data)
-      })
+    phoneService
+      .getAll()
+      .then(response => {setPersons(response)})
   }, [])
 
-  console.log("Persons", persons)
+  console.log("Persons: ", persons)
   return (
     <div>
       <h2>Phonebook</h2>
       <Filter value={personFilter} onChange={updateFilter}/>
       <PersonForm newName={newName} updatePerson={updatePerson} newNumber={newNumber} updateNumber={updateNumber} addPerson={addPerson}/>
       <h2>Numbers</h2>
-      <Persons persons={getPersons()}/>
+      <Persons persons={getPersons()} removePerson={removePerson}/>
     </div> 
   )
 }
