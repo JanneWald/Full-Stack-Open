@@ -1,5 +1,5 @@
 import Info from './Info'
-
+import Weather from './Weather'
 
 
 const Countries = ({countries, overrideFilter}) => {
@@ -19,7 +19,12 @@ const Countries = ({countries, overrideFilter}) => {
         )
     }
     else if (numOfCountries == 1){
-        return <Info country={countries[0]} />
+        return (
+            <>
+                <Info country={countries[0]} />
+                <Weather capital={countries[0].capital}/>
+            </>
+        )
     }
     return(
     <>
