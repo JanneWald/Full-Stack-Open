@@ -18,8 +18,9 @@ function App() {
     setFilter(event.target.value)
   }
 
-  const overrideFilter = () => {
-    
+  const overrideFilter = (filter) => {
+    console.log(`Pressed button to change filter t ${filter}`)
+    setFilter(filter)
   } 
 
   useEffect(() => {
@@ -31,8 +32,6 @@ function App() {
   },[])
 
   const [count, setCount] = useState(0)
-  const kuwait = countries.find(country => country.name.common.toLowerCase() == "kuwait")
-  console.log(kuwait)
   
   const getCountries = () => {
     return countries.filter(country => (country.name.common.toLowerCase().includes(filter.toLowerCase())))
@@ -51,8 +50,8 @@ function App() {
       </div>
       <h1>Countries Info search</h1>
       <p>Countries count: {countries.length}</p>
-      <label> Country Filter: <input value={filter} onChange={onFilter}/></label>
-      <Countries countries={getCountries()}/>
+      <label> Country Filter: <input value={filter} onChange={onFilter} /></label>
+      <Countries countries={getCountries()} overrideFilter={overrideFilter}/>
     </>
   )
 }

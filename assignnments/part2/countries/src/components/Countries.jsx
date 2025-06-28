@@ -2,10 +2,10 @@ import Info from './Info'
 
 
 
-const Countries = ({countries}) => {
+const Countries = ({countries, overrideFilter}) => {
 
-    const Show= () => {
-        return <button> Show </button>
+    const Show = ({country}) => {
+        return <button onClick={() => overrideFilter(country)}> Show </button>
     }
 
     console.log(`Passed to list ${countries}`)
@@ -26,7 +26,7 @@ const Countries = ({countries}) => {
     <h2>Available Countries</h2>
       <ul>
       {
-        countries.map((country) => <li key={country.cca3}> {country.name.common} <Show /></li>)
+        countries.map((country) => <li key={country.cca3}> {country.name.common} <Show country={country.name.common}/></li>)
       }
       </ul>
     </>
