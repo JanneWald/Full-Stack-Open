@@ -134,6 +134,10 @@ app.delete('/api/notes/:id', (request, response) => {
 - Can use, desltop, browser, or vscode extension
     - Alternatively use REST extentions
 #### Recieving data
+**to recieve json data you need to specify or unreadable header:**
+```js
+app.use(express.json())
+```
 Example notes post
 ```js
 // Get next note id
