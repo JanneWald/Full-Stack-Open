@@ -1,6 +1,8 @@
 const express = require('express')
 const app = express()
 
+const date = Date.now()
+
 let persons = [
     { 
       "id": "1",
@@ -28,9 +30,25 @@ app.get('/', (request, response) => {
   response.send('<h1>test api root dir</h1>')
 })
 
+app.get('/info', (request, response) => {
+    response.send(`The phonebook is storing data for ${persons.length} people\nAs of ${date}. FIXE ME LATER`)
+})
+
 app.get('/api/persons', (request, response) => {
   response.json(persons)
 })
+
+app.get('/api/persons/:id', (request, response) => {
+    const id = request.params.id
+    const person = persons.find(p => p.id === id)
+    if (person) {
+        response.json(person)
+    }
+    else {
+        response.status(404).end()
+    }
+})
+
 
 const PORT = 3001
 app.listen(PORT, () => {
