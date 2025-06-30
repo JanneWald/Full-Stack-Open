@@ -64,6 +64,20 @@ app.get('/api/persons/:id', (request, response) => {
     }
 })
 
+app.delete('/api/persons/:id', (request, response) => {
+    const id = request.params.id
+    const person = persons.find(p => p.id === id)
+    if (person) {
+        console.log(`${request.header} Deleting person[${id}]`)
+        persons = persons.filter(p => p.id !== person.id)
+        response.json(person)
+    }
+    else {
+        console.log(`${id} not present for deletion`)
+        response.status(404).end()
+    }
+})
+
 // Method for recieving a post
 app.post('/api/persons', (request, response) => {
     const body = request.body
