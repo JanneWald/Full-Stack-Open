@@ -1,0 +1,169 @@
+## NodeJS and Express
+- NodeJS runs on Google Chrome V8 JS engine
+
+Check node version:
+```bash
+node -v
+```
+Template:
+```bash
+npm init
+```
+Add line to scripts inside `package.json`:
+```json
+    "start": "node index.js",
+```
+Run `index.js` via node:
+```bash
+node index.js
+```
+or via npm
+```bash
+npm start
+```
+#### Web Server
+Hello World, Web Server
+```js
+const http = require('http') // Node web server module module
+
+const app = http.createServer( // Create server method with an event handler
+    (request, response) => {
+        response.writeHead(200, { 'Content-Type': 'text/plain' }) // Ok and header for response
+        response.end('Hello World') // Additional content
+    }
+)
+
+const PORT = 3001 // Empty port
+app.listen(PORT) // Start server
+console.log(`Server running on port ${PORT}`)
+```
+JSon Server
+```js
+const http = require('http')
+
+let notes = [  
+        {    
+        id: "1",    
+        content: "HTML is easy",    
+        important: true  
+        },  
+        {    
+        id: "2",    
+        content: "Browser can execute only JavaScript",    
+        important: false  
+        },  
+    ]
+const app = http.createServer(
+    (request, response) => {  
+        response.writeHead(200, { 'Content-Type': 'application/json' }) // Content format json
+        response.end(JSON.stringify(notes)) // Response.end needs a string
+        }
+    )
+
+const PORT = 3001
+app.listen(PORT)
+console.log(`Server running on port ${PORT}`)
+```
+#### Express
+- Makes server side dev more tolerable
+Install with 
+```bash
+npm install express
+```
+New server:
+```js
+const express = require('express')
+const app = express()
+
+let notes = [
+  ...
+]
+
+app.get('/', (request, response) => { /// HTTP GET at root
+  response.send('<h1>Hello World!</h1>')
+})
+
+app.get('/api/notes', (request, response) => { // HTTP GET at ./api/notes
+  response.json(notes)
+})
+
+const PORT = 3001
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
+})
+```
+- Server does not restart on changes unless watched:
+```json
+    "dev": "node --watch index.js"
+```
+Add to scripts in `package.json`, run with `npm run dev`
+#### Rest
+- For full REST, resources should be specifies by the url from a root, like `api/`
+  - `www.example.com/api/notes`
+    - `GET notes/10`, return 10th resource from notes
+    - `GET notes`, return all notes resources
+    - `POST notes`, create new resource with data
+    - `DELETE notes/10`, remove resource from notes
+    - `PUT notes/10`, replaces resouce in notes
+    - `PATCH notes/10`, replaces part of resouces in notes  
+##### Fetching resource
+
+```js
+app.get('/api/notes/:id', (request, response) => {
+    const id = request.params.id // Gets id var from url
+    const note = notes.find(note => note.id === id)
+    if (note) {    
+        response.json(note)  
+    }
+    else { // Need to handle not found or will default with 200 OK response 
+        response.status(404).end()  
+}})
+```
+
+##### Deleting Resource
+```js
+app.delete('/api/notes/:id', (request, response) => {
+  const id = request.params.id
+  notes = notes.filter(note => note.id !== id)
+
+  response.status(204).end()
+})
+```
+#### Postman
+- Use postman to test out things other than HTTP GET
+- Can use, desltop, browser, or vscode extension
+    - Alternatively use REST extentions
+#### Recieving data
+Example notes post
+```js
+// Get next note id
+const generateId = () => {
+  const maxId = notes.length > 0
+    ? Math.max(...notes.map(n => Number(n.id)))
+    : 0
+  return String(maxId + 1) 
+}
+
+// Method for recieving a post
+app.post('/api/notes', (request, response) => {
+  const body = request.body
+
+  // POST must have content
+  if (!body.content) {
+    return response.status(400).json({ 
+      error: 'content missing' 
+    })
+  }
+
+  const note = {
+    content: body.content,
+    important: body.important || false, // False if not important
+    id: generateId(),
+  }
+
+  notes = notes.concat(note)
+
+  response.json(note) // Send back note
+})
+```
+
