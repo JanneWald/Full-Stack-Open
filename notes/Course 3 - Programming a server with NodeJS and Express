@@ -170,4 +170,16 @@ app.post('/api/notes', (request, response) => {
   response.json(note) // Send back note
 })
 ```
-
+#### MiddleWare
+- express json parser is done with a middleware
+- can use multiple middlewares at the same time
+- write middleware with 3 params
+```js
+const requestLogger = (request, response, next) => {
+  console.log('Method:', request.method)
+  console.log('Path:  ', request.path)
+  console.log('Body:  ', request.body)
+  console.log('---')
+  next()
+}
+```
