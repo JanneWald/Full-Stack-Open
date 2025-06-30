@@ -32,8 +32,7 @@ let persons = [
 // Getting next id num helper
 const getId = () => {
   if (persons.length > 0) {
-    const maxId = Math.max(...persons.map(p => Number(p.id)))
-    return maxId + 1
+    return Math.floor(Math.random() * 1000000) + 1
   } else {
     return 0
   }
