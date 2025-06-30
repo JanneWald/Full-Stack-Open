@@ -2,8 +2,10 @@ const express = require('express')
 const app = express()
 app.use(express.json())
 
+// Date
 const date = new Date().toUTCString()
 
+// Beautiful database
 let persons = [
     { 
       "id": "1",
@@ -27,6 +29,7 @@ let persons = [
     }
 ]
 
+// Getting next id num helper
 const getId = () => {
   if (persons.length > 0) {
     const maxId = Math.max(...persons.map(p => Number(p.id)))
@@ -36,21 +39,25 @@ const getId = () => {
   }
 }
 
+// Test root
 app.get('/', (request, response) => {
     console.log(`${request.header} Requested root`)
     response.send('<h1>test api root dir</h1>')
 })
 
+// Info Tab
 app.get('/info', (request, response) => {
     console.log(`${request.header} Requested info page`)
     response.send(`The phonebook is storing data for ${persons.length} people\nAs of ${date}.`)
 })
 
+// General GET
 app.get('/api/persons', (request, response) => {
     console.log(`${request.header} Requested person log`)
     response.json(persons)
 })
 
+// Specific GET
 app.get('/api/persons/:id', (request, response) => {
     const id = request.params.id
     const person = persons.find(p => p.id === id)
@@ -60,10 +67,13 @@ app.get('/api/persons/:id', (request, response) => {
     }
     else {
         console.log(`${id} was requested but not present`)
-        response.status(404).end()
+        return response.status(400).json({ 
+            error: 'requested person was not present in api' 
+        })    
     }
 })
 
+// Specific delete
 app.delete('/api/persons/:id', (request, response) => {
     const id = request.params.id
     const person = persons.find(p => p.id === id)
@@ -74,7 +84,9 @@ app.delete('/api/persons/:id', (request, response) => {
     }
     else {
         console.log(`${id} not present for deletion`)
-        response.status(404).end()
+        return response.status(400).json({ 
+            error: 'person to be deleted was not present in api' 
+        })
     }
 })
 
@@ -86,14 +98,20 @@ app.post('/api/persons', (request, response) => {
   // POST must have X fields
   if (!body.name || !body.number) {
     return response.status(400).json({ 
-      error: 'fields missing' 
+      error: 'fields (name and or number) missing' 
     })
   }
 
   const person = {
+    id: getId(),
     name: body.name,
     number: body.number,
-    id: getId(),
+  }
+
+  if (persons.find(p => p.name === person.name)){
+    return response.status(400).json({ 
+        error: 'name must be unique' 
+    })
   }
 
   persons = persons.concat(person)
@@ -101,6 +119,7 @@ app.post('/api/persons', (request, response) => {
   response.json(person) // Send back note
 })
 
+// Main
 const PORT = 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
