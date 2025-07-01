@@ -182,4 +182,25 @@ const requestLogger = (request, response, next) => {
   console.log('---')
   next()
 }
+
+app.use(requestLogger)
 ```
+Morgan is good middleware for displaying requests to server in console
+
+## Deploying to Internet
+- If random user connected to a server @ip1 but makes queries to @ip2 for a backend `Same Origin Policy` will be an issue. This is to stop session hijacking and sending data maliciously
+Use `cors` to fix 
+```js
+const cors = require('cors')
+
+app.use(cors())
+
+// or
+
+app.use(cors({
+  origin: 'http://localhost:5173' // Specify an addr for db for more security
+}))
+```
+#### Deploying to Render
+- Create new web service
+- 
