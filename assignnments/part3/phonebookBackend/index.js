@@ -56,19 +56,16 @@ const getId = () => {
 
 // Test root
 app.get('/', (request, response) => {
-    console.log(`${request.header} Requested root`)
     response.send('<h1>test api root dir</h1>')
 })
 
 // Info Tab
 app.get('/info', (request, response) => {
-    console.log(`${request.header} Requested info page`)
     response.send(`The phonebook is storing data for ${persons.length} people\nAs of ${date}.`)
 })
 
 // General GET
 app.get('/api/persons', (request, response) => {
-    console.log(`${request.header} Requested person log`)
     response.json(persons)
 })
 
@@ -77,7 +74,6 @@ app.get('/api/persons/:id', (request, response) => {
     const id = request.params.id
     const person = persons.find(p => p.id === id)
     if (person) {
-        console.log(`${request.header} Requested person[${id}]`)
         response.json(person)
     }
     else {
@@ -93,7 +89,6 @@ app.delete('/api/persons/:id', (request, response) => {
     const id = request.params.id
     const person = persons.find(p => p.id === id)
     if (person) {
-        console.log(`${request.header} Deleting person[${id}]`)
         persons = persons.filter(p => p.id !== person.id)
         response.json(person)
     }
@@ -108,7 +103,6 @@ app.delete('/api/persons/:id', (request, response) => {
 // Method for recieving a post
 app.post('/api/persons', (request, response) => {
     const body = request.body
-    console.log(`POST request with: ${body}`)
 
   // POST must have X fields
   if (!body.name || !body.number) {
