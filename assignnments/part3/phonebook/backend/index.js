@@ -16,6 +16,7 @@ app.use(morgan(function (tokens, req, res) { // for example only, display json p
     JSON.stringify(req.body)
   ].join(' ')
 }))
+app.use(express.static('dist')) // Static dist/ folder middleware
 
 
 // Date

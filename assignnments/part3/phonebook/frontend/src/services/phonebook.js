@@ -1,5 +1,5 @@
 import axios from 'axios'
-const url = 'http://localhost:3001/api/persons'
+const url = '/api/persons' // No longer need full localhost:3001 url if same host with frontend build
 
 const getAll = () =>{
     console.log('getting request')

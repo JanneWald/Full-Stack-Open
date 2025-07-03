@@ -207,7 +207,7 @@ app.use(cors({
 - Give app root, ex: `assignnments/part3/phonebook/backend`
 - Give install command
 ```bash
-npm isntall
+npm install
 ```
 - Give run command
 ```bash
@@ -220,7 +220,7 @@ npm run dev
 - Normally react in dev mode with clear error
 - Prod build needed for optimized code
 ```bash
-npm run buil
+npm run build
 ```
   - Creates a `dist/` folder with static minified js code
 #### Serving static files from backend
@@ -228,4 +228,4 @@ npm run buil
 - Have express show *static* content uses `static` middleware
   - `app.use(express.static('dist'))`
   - Upon an HTTP GET, static will look for matching page in `dist/`
-  
+
