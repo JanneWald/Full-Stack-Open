@@ -203,4 +203,29 @@ app.use(cors({
 ```
 #### Deploying to Render
 - Create new web service
-- 
+- Give repo of your proj
+- Give app root, ex: `assignnments/part3/phonebook/backend`
+- Give install command
+```bash
+npm isntall
+```
+- Give run command
+```bash
+npm run dev
+```
+- Should automatically redeploy on new commits
+- Can also give env variables
+
+#### Frontend Production Build
+- Normally react in dev mode with clear error
+- Prod build needed for optimized code
+```bash
+npm run buil
+```
+  - Creates a `dist/` folder with static minified js code
+#### Serving static files from backend
+- Can copy `dist/` folder into backend
+- Have express show *static* content uses `static` middleware
+  - `app.use(express.static('dist'))`
+  - Upon an HTTP GET, static will look for matching page in `dist/`
+  
