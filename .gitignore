@@ -5,3 +5,4 @@ notes/.obsidian/core-plugins.json
 assignnments/part2/phonebook/db.json
 assignnments/part2/phonebook/db.json
 *node_modules*
+*dist*
