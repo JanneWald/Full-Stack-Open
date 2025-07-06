@@ -229,3 +229,88 @@ npm run build
   - `app.use(express.static('dist'))`
   - Upon an HTTP GET, static will look for matching page in `dist/`
 
+## MongoDB
+- Mongo is a *document* database
+- Create valid user/pass to access
+- In cluster allow all ip intenet access
+- Can use generated URI with Node.js's `mongodb` package
+  - Should use `mongoose` to auto convert js object to mongo document
+
+Example usage
+```js
+const mongoose = require('mongoose')
+
+if (process.argv.length < 3) {
+  console.log('give password as argument')
+  process.exit(1)
+}
+
+const password = process.argv[2]
+
+const url = `mongodb+srv://fullstack:${password}@cluster0.a5qfl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`
+
+mongoose.set('strictQuery',false)
+
+mongoose.connect(url)
+
+const noteSchema = new mongoose.Schema({
+  content: String,
+  important: Boolean,
+})
+
+const Note = mongoose.model('Note', noteSchema)
+
+const note = new Note({
+  content: 'HTML is easy',
+  important: true,
+})
+
+note.save().then(result => {
+  console.log('note saved!')
+  mongoose.connection.close()
+})
+```
+#### Sending Data
+Making a mongo *schema*
+- preset mongo structure, defining fields and data types
+```js
+const noteSchema = new mongoose.Schema({
+  content: String,
+  important: Boolean,
+})
+
+const Note = mongoose.model('Note', noteSchema)
+```
+- Document database does not even need identical data per collection
+- `Note` is a mongo constructor for document
+
+Use constructor and send:
+```js
+const note = new Note({
+  content: 'HTML is Easy',
+  important: false,
+})
+
+note.save().then(result => {
+  console.log('note saved!')
+  mongoose.connection.close()
+})
+```
+#### Recieving Data
+Use mongo find command
+```js
+Note.find({}).then(result => {
+  result.forEach(note => {
+    console.log(note)
+  })
+  mongoose.connection.close()
+})
+```
+- `{}` Signifies all notes
+- Can specify with other object flags.
+Query for notes that have important flag:
+```js
+Note.find({ important: true }).then(result => {
+  // ...
+})
+```
