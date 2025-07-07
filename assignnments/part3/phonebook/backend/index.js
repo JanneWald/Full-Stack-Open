@@ -18,11 +18,6 @@ app.use(morgan(function (tokens, req, res) { // for example only, display json p
 }))
 app.use(express.static('dist')) // Static dist/ folder middleware
 
-const password = "pretend"
-
-// Mongo uri
-const uri  = `mongodb+srv://fullstack:${password}@fullstackopen.ghvaraw.mongodb.net/?retryWrites=true&w=majority&appName=FullStackOpen`
-
 // Date
 const date = new Date().toUTCString()
 
