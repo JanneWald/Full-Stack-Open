@@ -34,8 +34,7 @@ const addPerson = (name, number) => {
         console.log(result)
         mongoose.connection.close()
         console.log(`${name} has been succesfully added`)
-    }).catch(
-        console.log('Error adding to databse')
+    }).catch(error => console.log('Error adding to databse')
     )
 }
 
@@ -46,7 +45,7 @@ const listPeople = () => {
             result.forEach(note => console.log(note))
         mongoose.connection.close()
         }
-    )
+    ).catch(error => console.log('Error viewing databse'))
 }
 
 // Main
