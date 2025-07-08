@@ -314,3 +314,21 @@ Note.find({ important: true }).then(result => {
   // ...
 })
 ```
+#### Defining env variables using `.env`
+Install with npm:
+```bash
+npm install dotenv
+```
+- Create a `.env` file in project root
+  - Add to git ignore
+Example file:
+```js
+MONGODB_URI=mongodb+srv://fullstack:thepasswordishere@cluster0.a5qfl.mongodb.net/noteApp?retryWrites=true&w=majority&appName=Cluster0
+PORT=3001
+```
+Load variables with `require`:
+```js
+require('dotenv').config()
+// ...
+const PORT = process.env.PORT
+```

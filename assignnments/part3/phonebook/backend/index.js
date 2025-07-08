@@ -1,8 +1,10 @@
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
-
+const Person = require('./models/person')
 const app = express()
+require('dotenv').config()
+
 
 app.use(cors())
 app.use(express.json())
@@ -21,37 +23,28 @@ app.use(express.static('dist')) // Static dist/ folder middleware
 // Date
 const date = new Date().toUTCString()
 
-// Beautiful database
-let persons = [
-    { 
-      "id": "1",
-      "name": "Arto Hellas", 
-      "number": "040-123456"
-    },
-    { 
-      "id": "2",
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": "3",
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": "4",
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
-    }
-]
+const getPeople = () => {
+  console.log("[Express] Requesting all people in database")
+  return Person.find({}).then(
+    result => {
+      console.log(`[Express] Server returned ${result}`)
+      return result
+    })
+    .catch(error => console.log(`Error viewing databse, ${error.message}`))
+}
 
-// Getting next id num helper
-const getId = () => {
-  if (persons.length > 0) {
-    return Math.floor(Math.random() * 1000000) + 1
-  } else {
-    return 0
-  }
+const addPerson = (name, number) => {
+  console.log(`Adding ${name}@${number} to the database`)
+  const person = new Person({
+    name: name,
+    number: number
+  })
+
+  person.save().then(result => {
+    console.log(`Result: ${result}`)
+    console.log(`${name} has been succesfully added`)
+  })
+  .catch(error => console.log('Error adding to databse'))
 }
 
 // Test root
@@ -61,18 +54,32 @@ app.get('/', (request, response) => {
 
 // Info Tab
 app.get('/info', (request, response) => {
-    response.send(`The phonebook is storing data for ${persons.length} people\nAs of ${date}.`)
+    response.send(`The phonebook is storing data for ${getPeople().length} people\nAs of ${date}.`)
 })
 
 // General GET
 app.get('/api/persons', (request, response) => {
-    response.json(persons)
+  console.log("[Express] Requested list of all people, returned:")  
+  console.log(getPeople())
+  getPeople()
+    .then(
+      people => {
+        console.log('[Express] Inside generic api call')
+        response.json(people)
+      }
+    )
+    .catch(
+      error => {
+        console.log(`[Express] Got error instead of people: {error.message}`)
+        response.status(500).json({error:'idk failed to get people'})
+      }
+    )
 })
 
 // Specific GET
 app.get('/api/persons/:id', (request, response) => {
     const id = request.params.id
-    const person = persons.find(p => p.id === id)
+    const person = getPeople().find(p => p.id === id)
     if (person) {
         response.json(person)
     }
@@ -87,6 +94,7 @@ app.get('/api/persons/:id', (request, response) => {
 // Specific delete
 app.delete('/api/persons/:id', (request, response) => {
     const id = request.params.id
+    const persons = getPeople()
     const person = persons.find(p => p.id === id)
     if (person) {
         persons = persons.filter(p => p.id !== person.id)
@@ -112,19 +120,18 @@ app.post('/api/persons', (request, response) => {
   }
 
   const person = {
-    id: getId(),
+    id: genId(),
     name: body.name,
     number: body.number,
   }
 
-  if (persons.find(p => p.name === person.name)){
+  if (getPeople().find(p => p.name === person.name)){
     return response.status(400).json({ 
         error: 'name must be unique' 
     })
   }
 
-  persons = persons.concat(person)
-
+  addPerson(body.name, body.number)
   response.json(person) // Send back note
 })
 
