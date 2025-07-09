@@ -21,12 +21,20 @@ app.use(express.static('dist')) // Static dist/ folder middleware
 
 const date = new Date().toUTCString()
 
-const unknownEndpoint = (request, response) => {
-  response.status(404).send({ error: 'unknown endpoint' })
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  }
+  else{
+    response.status(407).send({misc:'misc error handler!', error:error.message})
+  }
+  next(error)
 }
 
-// handler of requests with unknown endpoint
-app.use(unknownEndpoint)
+// this has to be the last loaded middleware, also all the routes should be registered before this!
+app.use(errorHandler)
 
 // Return all people from mongo db
 const getPeople = () => {
@@ -36,7 +44,9 @@ const getPeople = () => {
       console.log(`[Express] Server returned ${result}`)
       return result
     })
-    .catch(error => console.log(`Error viewing databse, ${error.message}`))
+    .catch(
+      error => console.log(`Error viewing databse, ${error.message}`)
+    )
 }
 
 // Add person to mongo db
@@ -53,7 +63,11 @@ const addPerson = (name, number) => {
       console.log(`${name} has been succesfully added`)
       return result
     })
-    .catch(error => console.log('Error adding to databse'))
+    .catch(
+      error => {
+        console.log('Error adding to databse')
+      }
+    )
 }
 
 // Test root
@@ -63,7 +77,17 @@ app.get('/', (request, response) => {
 
 // Info Tab
 app.get('/info', (request, response) => {
-    response.send(`The phonebook is storing data for ${getPeople().length} people\nAs of ${date}.`)
+  getPeople()
+    .then(
+      people => {
+        return response.send(`The phonebook is storing data for ${people.length} people\nAs of ${date}.`)
+      }
+    )
+    .catch(
+      error => {
+        next(error)
+      }
+    )
 })
 
 // General GET
@@ -80,7 +104,7 @@ app.get('/api/persons', (request, response) => {
     .catch(
       error => {
         console.log(`[Express] Got error instead of people: {error.message}`)
-        response.status(500).json({error:'idk failed to get people'})
+        next(error)
       }
     )
 })
@@ -93,15 +117,15 @@ app.get('/api/persons/:id', (request, response) => {
         response.json(person)
     }
     else {
-        console.log(`${id} was requested but not present`)
-        return response.status(400).json({ 
-            error: 'requested person was not present in api' 
-        })    
+      console.log(`${id} was requested but not present`)
+      return response.status(400).json({ 
+          error: 'requested person was not present in api' 
+      })    
     }
 })
 
 // Specific delete
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response, next) => {
   const id = request.params.id
   
   Person.findByIdAndDelete(id)
@@ -114,15 +138,18 @@ app.delete('/api/persons/:id', (request, response) => {
         else {
           console.log(`${id} not present for deletion`)
           return response.status(400).json({ 
-              error: 'person to be deleted was not present in api' 
+            error: 'person to be deleted was not present in api' 
           })
         }
       }
     )
+    .catch(
+      error => next(error)
+    )
 })
 
 // Method for recieving a post
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
   const body = request.body
 
   // POST must have all fields
@@ -131,7 +158,6 @@ app.post('/api/persons', (request, response) => {
       error: 'fields (name and or number) missing' 
     })
   }
-
   return getPeople()
     .then(people => {
       // Don't add duplicate to db
@@ -146,7 +172,11 @@ app.post('/api/persons', (request, response) => {
           )
       }
     })
+    .catch(
+      error => next(error)
+    )
 })
+
 
 // Main
 const PORT = process.env.PORT || 3001
