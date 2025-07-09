@@ -110,7 +110,7 @@ app.delete('/api/persons/:id', (request, response) => {
 
 // Method for recieving a post
 app.post('/api/persons', (request, response) => {
-    const body = request.body
+  const body = request.body
 
   // POST must have X fields
   if (!body.name || !body.number) {
@@ -119,20 +119,16 @@ app.post('/api/persons', (request, response) => {
     })
   }
 
-  const person = {
-    id: genId(),
-    name: body.name,
-    number: body.number,
-  }
-
-  if (getPeople().find(p => p.name === person.name)){
-    return response.status(400).json({ 
-        error: 'name must be unique' 
+  return getPeople()
+    .then(people => {
+      if (people.find(p => p.name === body.name)){
+        return response.status(400).json({ error: 'name must be unique'})
+      }
+      else{
+        addPerson(body.name, body.number)
+        return response.json({id: 200, name: 'test dude', number: '3'}) // Send back note
+      }
     })
-  }
-
-  addPerson(body.name, body.number)
-  response.json(person) // Send back note
 })
 
 // Main
