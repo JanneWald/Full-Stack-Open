@@ -1,12 +1,11 @@
 const express = require('express')
+const app = express()
+app.use(express.json())
 const morgan = require('morgan')
 const cors = require('cors')
 const Person = require('./models/person')
-const app = express()
 require('dotenv').config()
-
 app.use(cors())
-app.use(express.json())
 app.use(morgan(function (tokens, req, res) { // for example only, display json passing
   return [
     tokens.method(req, res),
@@ -17,24 +16,6 @@ app.use(morgan(function (tokens, req, res) { // for example only, display json p
     JSON.stringify(req.body)
   ].join(' ')
 }))
-app.use(express.static('dist')) // Static dist/ folder middleware
-
-const date = new Date().toUTCString()
-
-const errorHandler = (error, request, response, next) => {
-  console.error(error.message)
-
-  if (error.name === 'CastError') {
-    return response.status(400).send({ error: 'malformatted id' })
-  }
-  else{
-    response.status(407).send({misc:'misc error handler!', error:error.message})
-  }
-  next(error)
-}
-
-// this has to be the last loaded middleware, also all the routes should be registered before this!
-app.use(errorHandler)
 
 // Return all people from mongo db
 const getPeople = () => {
@@ -70,13 +51,10 @@ const addPerson = (name, number) => {
     )
 }
 
-// Test root
-app.get('/', (request, response) => {
-    response.send('<h1>test api root dir</h1>')
-})
-
 // Info Tab
 app.get('/info', (request, response) => {
+  console.log("[Express] Hit /info")
+  const date = new Date().toUTCString()
   getPeople()
     .then(
       people => {
@@ -92,6 +70,7 @@ app.get('/info', (request, response) => {
 
 // General GET
 app.get('/api/persons', (request, response) => {
+  console.log("[Express] Hit /api/persons")
   console.log("[Express] Requested list of all people, returned:")  
   console.log(getPeople())
   getPeople()
@@ -110,18 +89,25 @@ app.get('/api/persons', (request, response) => {
 })
 
 // Specific GET
-app.get('/api/persons/:id', (request, response) => {
+app.get('/api/persons/:id', (request, response, next) => {
     const id = request.params.id
-    const person = getPeople().find(p => p.id === id)
-    if (person) {
-        response.json(person)
-    }
-    else {
-      console.log(`${id} was requested but not present`)
-      return response.status(400).json({ 
-          error: 'requested person was not present in api' 
-      })    
-    }
+
+    return Person.findById(id)
+      .then(
+        person => {
+          if (person)
+            return response.json(person)
+          else{
+            console.log(`${id} was requested but not present`)
+            return response.status(400).json({ 
+              error: 'requested person was not present in api' 
+            })  
+          }
+        }
+    )
+    .catch(
+      error => next(error)
+    )
 })
 
 // Specific delete
@@ -201,6 +187,19 @@ app.put('/api/persons/:id', (request, response, next) => {
     )
 })
 
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  }
+  next(error)
+}
+
+app.use(express.static('dist')) // Static dist/ folder middleware
+
+// this has to be the last loaded middleware, also all the routes should be registered before this!
+app.use(errorHandler)
 
 // Main
 const PORT = process.env.PORT || 3001
