@@ -5,7 +5,6 @@ const Person = require('./models/person')
 const app = express()
 require('dotenv').config()
 
-
 app.use(cors())
 app.use(express.json())
 app.use(morgan(function (tokens, req, res) { // for example only, display json passing
@@ -20,9 +19,9 @@ app.use(morgan(function (tokens, req, res) { // for example only, display json p
 }))
 app.use(express.static('dist')) // Static dist/ folder middleware
 
-// Date
 const date = new Date().toUTCString()
 
+// Return all people from mongo db
 const getPeople = () => {
   console.log("[Express] Requesting all people in database")
   return Person.find({}).then(
@@ -33,6 +32,7 @@ const getPeople = () => {
     .catch(error => console.log(`Error viewing databse, ${error.message}`))
 }
 
+// Add person to mongo db
 const addPerson = (name, number) => {
   console.log(`Adding ${name}@${number} to the database`)
   const person = new Person({
@@ -40,11 +40,13 @@ const addPerson = (name, number) => {
     number: number
   })
 
-  person.save().then(result => {
-    console.log(`Result: ${result}`)
-    console.log(`${name} has been succesfully added`)
-  })
-  .catch(error => console.log('Error adding to databse'))
+  return person.save()
+    .then(result => {
+      console.log(`Result: ${result}`)
+      console.log(`${name} has been succesfully added`)
+      return result
+    })
+    .catch(error => console.log('Error adding to databse'))
 }
 
 // Test root
@@ -96,10 +98,12 @@ app.delete('/api/persons/:id', (request, response) => {
     const id = request.params.id
     const persons = getPeople()
     const person = persons.find(p => p.id === id)
+    
     if (person) {
         persons = persons.filter(p => p.id !== person.id)
         response.json(person)
     }
+    
     else {
         console.log(`${id} not present for deletion`)
         return response.status(400).json({ 
@@ -112,7 +116,7 @@ app.delete('/api/persons/:id', (request, response) => {
 app.post('/api/persons', (request, response) => {
   const body = request.body
 
-  // POST must have X fields
+  // POST must have all fields
   if (!body.name || !body.number) {
     return response.status(400).json({ 
       error: 'fields (name and or number) missing' 
@@ -121,12 +125,16 @@ app.post('/api/persons', (request, response) => {
 
   return getPeople()
     .then(people => {
+      // Don't add duplicate to db
       if (people.find(p => p.name === body.name)){
         return response.status(400).json({ error: 'name must be unique'})
       }
-      else{
+      // Forward mongo response back
+      else {
         addPerson(body.name, body.number)
-        return response.json({id: 200, name: 'test dude', number: '3'}) // Send back note
+          .then(
+            person => {return response.json(person)}
+          )
       }
     })
 })
