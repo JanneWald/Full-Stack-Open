@@ -332,3 +332,29 @@ require('dotenv').config()
 // ...
 const PORT = process.env.PORT
 ```
+#### Error handling w/ Middleware
+- Add `next` to an express method:
+```js
+app.get('/api/notes/:id', (request, response, next) => {
+// .. Some promise ..
+  .catch(error => next(error))
+```
+- This will call an `error handler middleware`
+  - Defined with 4 params
+```js
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } 
+
+  next(error)
+}
+
+// this has to be the last loaded middleware, also all the routes should be registered before this!
+app.use(errorHandler)
+```
+#### Other important mongoose methods
+- `findById()`
+- `findByIdAndDelete()`

@@ -21,6 +21,13 @@ app.use(express.static('dist')) // Static dist/ folder middleware
 
 const date = new Date().toUTCString()
 
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+
+// handler of requests with unknown endpoint
+app.use(unknownEndpoint)
+
 // Return all people from mongo db
 const getPeople = () => {
   console.log("[Express] Requesting all people in database")
@@ -95,21 +102,23 @@ app.get('/api/persons/:id', (request, response) => {
 
 // Specific delete
 app.delete('/api/persons/:id', (request, response) => {
-    const id = request.params.id
-    const persons = getPeople()
-    const person = persons.find(p => p.id === id)
-    
-    if (person) {
-        persons = persons.filter(p => p.id !== person.id)
-        response.json(person)
-    }
-    
-    else {
-        console.log(`${id} not present for deletion`)
-        return response.status(400).json({ 
-            error: 'person to be deleted was not present in api' 
-        })
-    }
+  const id = request.params.id
+  
+  Person.findByIdAndDelete(id)
+    .then(
+      person => {
+        if (person) {
+          console.log(`[Express] Mongo accepted deletion with: ${person}`)
+          return response.json(person)
+        }
+        else {
+          console.log(`${id} not present for deletion`)
+          return response.status(400).json({ 
+              error: 'person to be deleted was not present in api' 
+          })
+        }
+      }
+    )
 })
 
 // Method for recieving a post
