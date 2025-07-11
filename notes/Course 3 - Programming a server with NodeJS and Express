@@ -358,3 +358,35 @@ app.use(errorHandler)
 #### Other important mongoose methods
 - `findById()`
 - `findByIdAndDelete()`
+
+## Validation
+- Can provide additional rules to mongo for accepting documents
+
+Add validation rules to schema:
+```js
+const noteSchema = new mongoose.Schema({
+  content: {    
+    type: String,    
+    minLength: 5,   // Built in validator from Mongoose
+    required: true  // Built in validator from Mongoose
+    },  
+  important: Boolean
+})
+```
+- Can make custom validators
+  - https://mongoosejs.com/docs/validation.html#custom-validators
+- Breaking rule causes an `ValidationError` exception
+Error handler example
+```js
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } 
+  else if (error.name === 'ValidationError') {    // Case for Validations 
+    return response.status(400).json({ error: error.message })
+  }
+  next(error)
+}
+```
