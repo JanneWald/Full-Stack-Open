@@ -4,8 +4,11 @@ const url = '/api/persons' // No longer need full localhost:3001 url if same hos
 const getAll = () =>{
     console.log('getting request')
     // auto parses the response field
-    return axios.get(url) 
-        .then(response => {return response.data})
+    return axios
+        .get(url) 
+        .then(response => {
+            return response.data
+        })
 }
 
 const add = (name, number) => {

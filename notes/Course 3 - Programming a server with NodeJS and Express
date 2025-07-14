@@ -376,7 +376,8 @@ const noteSchema = new mongoose.Schema({
 - Can make custom validators
   - https://mongoosejs.com/docs/validation.html#custom-validators
 - Breaking rule causes an `ValidationError` exception
-Error handler example
+
+Error handler example:
 ```js
 const errorHandler = (error, request, response, next) => {
   console.error(error.message)
@@ -390,3 +391,6 @@ const errorHandler = (error, request, response, next) => {
   next(error)
 }
 ```
+- Any return code outside `2xx` will activate the catch block
+  - Ex: 400, 404, etc.
+  - Thus we can use .catch() with an axios promise in frontend 

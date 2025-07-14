@@ -99,6 +99,7 @@ const App = () => {
         .then(setColor('green'))
         .then(setTimeout(() => setMessage(""), 5000))
         .catch(error => {
+          console.log(`[Vite] ${error.response.data.error}`)
           setColor('red')
           setMessage(`Error POSTing ${newName} to db`)
           setTimeout(() => setMessage(""), 5000)
