@@ -8,10 +8,10 @@ mongoose.set('strictQuery', false)
 console.log(`Connecting to: ${url}`)
 mongoose.connect(url)
     .then(
-        result => console.log('Succesfully Connected')
+        result => console.log('[MongoDB] Succesfully Connected')
     )
     .catch(
-        error => console.log(`Error connecting: ${error.message}`)
+        error => console.log(`[MongoDB] Error connecting, ${error.message}`)
     )
 
 const personSchema = new mongoose.Schema({
@@ -20,7 +20,11 @@ const personSchema = new mongoose.Schema({
       minLength: 3,
       required: true
     },
-    number: String,
+    number: {
+      type: String,
+      validator: isValidPhoneNumber,
+      message: 'Inproper phone number, requires at least 8 numbers, with a - seperator'
+    }
 })
 
 personSchema.set('toJSON', {
@@ -34,3 +38,20 @@ personSchema.set('toJSON', {
 const Person = mongoose.model('Person', personSchema)
 
 module.exports = Person
+
+const isValidPhoneNumber = (number) => {
+  if (number.length < 8) return false
+
+  const parts = number.split('-')
+  if (parts.length !== 2) return false
+
+  const [first, second] = parts
+
+  // Check first part: must be 2 or 3 digits
+  if (!/^\d{2,3}$/.test(first)) return false
+
+  // Check second part: must be all digits
+  if (!/^\d+$/.test(second)) return false
+
+  return true
+}

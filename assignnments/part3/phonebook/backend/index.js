@@ -90,24 +90,24 @@ app.get('/api/persons', (request, response) => {
 
 // Specific GET
 app.get('/api/persons/:id', (request, response, next) => {
-    const id = request.params.id
+  const id = request.params.id
 
-    return Person.findById(id)
-      .then(
-        person => {
-          if (person)
-            return response.json(person)
-          else{
-            console.log(`${id} was requested but not present`)
-            return response.status(400).json({ 
-              error: 'requested person was not present in api' 
-            })  
-          }
+  return Person.findById(id)
+    .then(
+      person => {
+        if (person)
+          return response.json(person)
+        else{
+          console.log(`${id} was requested but not present`)
+          return response.status(400).json({ 
+            error: 'requested person was not present in api' 
+          })  
         }
-    )
-    .catch(
-      error => next(error)
-    )
+      }
+  )
+  .catch(
+    error => next(error)
+  )
 })
 
 // Specific delete
