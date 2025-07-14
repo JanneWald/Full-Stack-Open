@@ -99,9 +99,10 @@ const App = () => {
         .then(setColor('green'))
         .then(setTimeout(() => setMessage(""), 5000))
         .catch(error => {
-          console.log(`[Vite] ${error.response.data.error}`)
+          const error_response = error.response.data.error
+          console.log(`[Vite] Error: ${error_response}`)
           setColor('red')
-          setMessage(`Error POSTing ${newName} to db`)
+          setMessage(error_response)
           setTimeout(() => setMessage(""), 5000)
         })
     }
