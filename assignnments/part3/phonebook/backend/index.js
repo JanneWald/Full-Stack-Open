@@ -30,27 +30,6 @@ const getPeople = () => {
     )
 }
 
-// Add person to mongo db
-const addPerson = (name, number) => {
-  console.log(`Adding ${name}@${number} to the database`)
-  const person = new Person({
-    name: name,
-    number: number
-  })
-
-  return person.save()
-    .then(result => {
-      console.log(`Result: ${result}`)
-      console.log(`${name} has been succesfully added`)
-      return result
-    })
-    .catch(
-      error => {
-        console.log('Error adding to databse')
-      }
-    )
-}
-
 // Info Tab
 app.get('/info', (request, response) => {
   console.log("[Express] Hit /info")
@@ -106,7 +85,7 @@ app.get('/api/persons/:id', (request, response, next) => {
       }
   )
   .catch(
-    error => next(error)
+    error => {next(error)}
   )
 })
 
@@ -144,6 +123,7 @@ app.post('/api/persons', (request, response, next) => {
       error: 'fields (name and or number) missing' 
     })
   }
+
   return getPeople()
     .then(people => {
       // Don't add duplicate to db
@@ -152,10 +132,20 @@ app.post('/api/persons', (request, response, next) => {
       }
       // Forward mongo response back
       else {
-        addPerson(body.name, body.number)
-          .then(
-            person => {return response.json(person)}
-          )
+        console.log(`Adding ${body.name}@${body.number} to the database`)
+        const person = new Person({ name: body.name, number: body.number})
+
+        person.save()
+          .then(result => {
+            console.log(`Result: ${result}`)
+            console.log(`${body.name} has been succesfully added`)
+            return response.json(body)
+          })
+          .catch(
+            error => {
+              console.log('[Express] Error adding to databse:')
+              next(error)
+            })
       }
     })
     .catch(
@@ -191,9 +181,11 @@ const errorHandler = (error, request, response, next) => {
   console.error(error.message)
 
   if (error.name === 'CastError') {
+    console.log("[Express] Cast Error")
     return response.status(400).json({ error: 'malformatted id' })
   }
   else if (error.name === 'ValidationError'){
+    console.log("[Express] Cast Error")
     return response.status(400).json({ error: error.message})
   }
   
