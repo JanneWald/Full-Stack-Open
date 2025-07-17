@@ -19,7 +19,7 @@ app.use(morgan(function (tokens, req, res) { // for example only, display json p
 
 // Return all people from mongo db
 const getPeople = () => {
-  console.log("[Express] Requesting all people in database")
+  console.log('[Express] Requesting all people in database')
   return Person.find({}).then(
     result => {
       console.log(`[Express] Server returned ${result}`)
@@ -31,14 +31,14 @@ const getPeople = () => {
 }
 
 // Info Tab
-app.get('/info', (request, response) => {
-  console.log("[Express] Hit /info")
+app.get('/info', (request, response, next) => {
+  console.log('[Express] Hit /info')
   const date = new Date().toUTCString()
   Person.find({}).then(
-      people => {
-        return response.send(`The phonebook is storing data for ${people.length} people\nAs of ${date}.`)
-      }
-    )
+    people => {
+      return response.send(`The phonebook is storing data for ${people.length} people\nAs of ${date}.`)
+    }
+  )
     .catch(
       error => {
         next(error)
@@ -47,9 +47,9 @@ app.get('/info', (request, response) => {
 })
 
 // General GET
-app.get('/api/persons', (request, response) => {
-  console.log("[Express] Hit /api/persons")
-  console.log("[Express] Requested list of all people, returned:")  
+app.get('/api/persons', (request, response, next) => {
+  console.log('[Express] Hit /api/persons')
+  console.log('[Express] Requested list of all people, returned:')
   console.log(getPeople())
   Person.find({})
     .then(
@@ -60,13 +60,13 @@ app.get('/api/persons', (request, response) => {
     )
     .catch(
       error => {
-        console.log(`[Express] Got error instead of people: {error.message}`)
+        console.log('[Express] Got error instead of people: {error.message}')
         next(error)
       }
     )
 })
 
-// Specific GET 
+// Specific GET
 app.get('/api/persons/:id', (request, response, next) => {
   const id = request.params.id
 
@@ -77,21 +77,21 @@ app.get('/api/persons/:id', (request, response, next) => {
           return response.json(person)
         else{
           console.log(`${id} was requested but not present`)
-          return response.status(400).json({ 
-            error: 'requested person was not present in api' 
-          })  
+          return response.status(400).json({
+            error: 'requested person was not present in api'
+          })
         }
       }
-  )
-  .catch(
-    error => {next(error)}
-  )
+    )
+    .catch(
+      error => {next(error)}
+    )
 })
 
 // Specific delete
 app.delete('/api/persons/:id', (request, response, next) => {
   const id = request.params.id
-  
+
   Person.findByIdAndDelete(id)
     .then(
       person => {
@@ -101,8 +101,8 @@ app.delete('/api/persons/:id', (request, response, next) => {
         }
         else {
           console.log(`${id} not present for deletion`)
-          return response.status(400).json({ 
-            error: 'person to be deleted was not present in api' 
+          return response.status(400).json({
+            error: 'person to be deleted was not present in api'
           })
         }
       }
@@ -118,8 +118,8 @@ app.post('/api/persons', (request, response, next) => {
 
   // POST must have all fields
   if (!body.name || !body.number) {
-    return response.status(400).json({ 
-      error: 'fields (name and or number) missing' 
+    return response.status(400).json({
+      error: 'fields (name and or number) missing'
     })
   }
 
@@ -127,12 +127,12 @@ app.post('/api/persons', (request, response, next) => {
     .then(people => {
       // Don't add duplicate to db
       if (people.find(p => p.name === body.name)){
-        return response.status(400).json({ error: 'name must be unique'})
+        return response.status(400).json({ error: 'name must be unique' })
       }
       // Forward mongo response back
       else {
         console.log(`Adding ${body.name}@${body.number} to the database`)
-        const person = new Person({ name: body.name, number: body.number})
+        const person = new Person({ name: body.name, number: body.number })
 
         person.save()
           .then(result => {
@@ -153,7 +153,7 @@ app.post('/api/persons', (request, response, next) => {
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
-  const {name, number} = request.body
+  const { name, number } = request.body
 
   Person.findById(request.params.id)
     .then(person => {
@@ -169,7 +169,7 @@ app.put('/api/persons/:id', (request, response, next) => {
           updatedPerson => {
             response.json(updatedPerson)
           }
-       )
+        )
     })
     .catch(
       error => next(error)
@@ -180,14 +180,14 @@ const errorHandler = (error, request, response, next) => {
   console.error(error.message)
 
   if (error.name === 'CastError') {
-    console.log("[Express] Cast Error")
+    console.log('[Express] Cast Error')
     return response.status(400).json({ error: 'malformatted id' })
   }
   else if (error.name === 'ValidationError'){
-    console.log("[Express] Cast Error")
-    return response.status(400).json({ error: error.message})
+    console.log('[Express] Cast Error')
+    return response.status(400).json({ error: error.message })
   }
-  
+
   next(error)
 }
 

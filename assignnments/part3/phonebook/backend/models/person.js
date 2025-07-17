@@ -7,12 +7,12 @@ mongoose.set('strictQuery', false)
 
 console.log(`Connecting to: ${url}`)
 mongoose.connect(url)
-    .then(
-      result => console.log('[MongoDB] Succesfully Connected', result)
-    )
-    .catch(
-      error => console.log(`[MongoDB] Error connecting, ${error.message}`)
-    )
+  .then(
+    result => console.log('[MongoDB] Succesfully Connected', result)
+  )
+  .catch(
+    error => console.log(`[MongoDB] Error connecting, ${error.message}`)
+  )
 
 const isValidPhoneNumber = (number) => {
   console.log(`[Validator] Checking ${number}`)
@@ -33,18 +33,18 @@ const isValidPhoneNumber = (number) => {
 }
 
 const personSchema = new mongoose.Schema({
-    name: {
-      type: String,
-      minLength: 3,
-      required: true
-    },
-    number: {
-      type: String,
-      validate:{
-        validator: isValidPhoneNumber,
-        message: 'Inproper phone number, requires at least 8 numbers, with a - seperator'
-      }
+  name: {
+    type: String,
+    minLength: 3,
+    required: true
+  },
+  number: {
+    type: String,
+    validate:{
+      validator: isValidPhoneNumber,
+      message: 'Inproper phone number, requires at least 8 numbers, with a - seperator'
     }
+  }
 })
 
 personSchema.set('toJSON', {
