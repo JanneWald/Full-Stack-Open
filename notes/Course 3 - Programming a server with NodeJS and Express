@@ -393,4 +393,62 @@ const errorHandler = (error, request, response, next) => {
 ```
 - Any return code outside `2xx` will activate the catch block
   - Ex: 400, 404, etc.
-  - Thus we can use .catch() with an axios promise in frontend 
+  - Thus we can use .catch() with an axios promise in frontend
+
+## Linting
+Add eslint as dev dependency
+```bash
+npm install eslint @eslint/js --save-dev
+```
+- dev dependencies are only included in non production builds
+Initialize eslint:
+```bash
+npx eslint --init
+```
+- This generates config file: `eslint.config.mjs`
+
+Use default JS lint setting:
+```js
+import globals from 'globals'
+import js from '@eslint/js'// ...
+
+export default [
+  js.configs.recommended,  {
+    // ...
+  },
+]
+```
+Example plugin install with code rules:
+```bash
+npm install --save-dev @stylistic/eslint-plugin-js
+```
+Add to file
+```js
+import globals from 'globals'
+import js from '@eslint/js'
+import stylisticJs from '@stylistic/eslint-plugin-js'
+export default [
+  {
+    // ...
+    plugins: {       '@stylistic/js': stylisticJs,    },    rules: {       '@stylistic/js/indent': ['error', 2],      '@stylistic/js/linebreak-style': ['error', 'unix'],      '@stylistic/js/quotes': ['error', 'single'],      '@stylistic/js/semi': ['error', 'never'],    },   },
+]
+```
+- Lint running should be a seperate script
+```json
+"lint": "eslint .",
+```
+- Make linter ignore dist built files:
+```js
+// ...
+export default [
+  js.configs.recommended,
+  {
+    files: ['**/*.js'],
+    // ...
+  },
+
+  { 
+    ignores: ['dist/**'], 
+  },
+]
+```

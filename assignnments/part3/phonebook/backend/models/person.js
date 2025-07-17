@@ -8,10 +8,10 @@ mongoose.set('strictQuery', false)
 console.log(`Connecting to: ${url}`)
 mongoose.connect(url)
     .then(
-        result => console.log('[MongoDB] Succesfully Connected')
+      result => console.log('[MongoDB] Succesfully Connected', result)
     )
     .catch(
-        error => console.log(`[MongoDB] Error connecting, ${error.message}`)
+      error => console.log(`[MongoDB] Error connecting, ${error.message}`)
     )
 
 const isValidPhoneNumber = (number) => {
