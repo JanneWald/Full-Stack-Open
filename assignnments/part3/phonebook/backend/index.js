@@ -34,8 +34,7 @@ const getPeople = () => {
 app.get('/info', (request, response) => {
   console.log("[Express] Hit /info")
   const date = new Date().toUTCString()
-  getPeople()
-    .then(
+  Person.find({}).then(
       people => {
         return response.send(`The phonebook is storing data for ${people.length} people\nAs of ${date}.`)
       }
@@ -52,7 +51,7 @@ app.get('/api/persons', (request, response) => {
   console.log("[Express] Hit /api/persons")
   console.log("[Express] Requested list of all people, returned:")  
   console.log(getPeople())
-  getPeople()
+  Person.find({})
     .then(
       people => {
         console.log('[Express] Inside generic api call')
@@ -124,7 +123,7 @@ app.post('/api/persons', (request, response, next) => {
     })
   }
 
-  return getPeople()
+  return Person.find({})
     .then(people => {
       // Don't add duplicate to db
       if (people.find(p => p.name === body.name)){
