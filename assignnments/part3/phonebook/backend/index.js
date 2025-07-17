@@ -60,7 +60,7 @@ app.get('/api/persons', (request, response, next) => {
     )
     .catch(
       error => {
-        console.log('[Express] Got error instead of people: {error.message}')
+        console.log(`[Express] Got error instead of people: ${error.message}`)
         next(error)
       }
     )

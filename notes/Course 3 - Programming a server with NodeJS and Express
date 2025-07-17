@@ -430,7 +430,14 @@ import stylisticJs from '@stylistic/eslint-plugin-js'
 export default [
   {
     // ...
-    plugins: {       '@stylistic/js': stylisticJs,    },    rules: {       '@stylistic/js/indent': ['error', 2],      '@stylistic/js/linebreak-style': ['error', 'unix'],      '@stylistic/js/quotes': ['error', 'single'],      '@stylistic/js/semi': ['error', 'never'],    },   },
+    plugins: { '@stylistic/js': stylisticJs, },
+    rules: { 
+      '@stylistic/js/indent': ['error', 2],
+      '@stylistic/js/linebreak-style': ['error', 'unix'],
+      '@stylistic/js/quotes': ['error', 'single'],
+      '@stylistic/js/semi': ['error', 'never'],   
+    },   
+  },
 ]
 ```
 - Lint running should be a seperate script
@@ -452,3 +459,4 @@ export default [
   },
 ]
 ```
+- ABSOLUTELY add the VSCode extension for eslint from Microsoft
