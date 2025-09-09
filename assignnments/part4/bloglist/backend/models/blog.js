@@ -1,3 +1,7 @@
+/* 
+Sets up the mongoose database schema, along with the toJson() transformation 
+*/
+
 const mongoose = require('mongoose')
 
 const blogSchema = mongoose.Schema({

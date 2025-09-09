@@ -1,3 +1,8 @@
+/*
+The main() of our Express server.
+
+Sets up express() object, MongoDB connection, and loads appropriate middleware
+*/
 const express = require('express')
 const mongoose = require('mongoose')
 const config = require('./utils/config')

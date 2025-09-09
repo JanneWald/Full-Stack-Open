@@ -1,3 +1,8 @@
+/*
+Logic for Express server routing. 
+
+Facilitates REST operations on blog URI's and makes appropriate calls to our MongoDB
+*/
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 

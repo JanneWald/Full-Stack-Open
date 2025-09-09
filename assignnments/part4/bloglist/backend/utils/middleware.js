@@ -1,3 +1,6 @@
+/* 
+Creates the middleware functions for our Express server
+*/
 const logger = require('./logger')
 
 const requestLogger = (request, response, next) => {

@@ -1,3 +1,6 @@
+/* 
+This sets up and exports the project config variables.
+ */
 require('dotenv').config()
 
 const PORT = process.env.PORT
