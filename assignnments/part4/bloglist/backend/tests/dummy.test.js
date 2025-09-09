@@ -112,7 +112,19 @@ describe('lodash tests', () => {
       author: "Robert C. Martin",
       blogs:3
     }
+
     assert.deepStrictEqual(actual, expected)
+  })
+
+  test('for author with most likes', () => {
+    const actual = listHelper.mostLikes(blogs)
+    const expected = {
+      author:"Edsger W. Dijkstra",
+      likes:17
+    }
+
+    assert.deepStrictEqual(actual, expected)
+
   })
 
 })
