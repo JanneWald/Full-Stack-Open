@@ -73,27 +73,26 @@ test('dummy returns one', () => {
 })
 
 describe('total likes', () => {
-
   test('of one blog', () => {
-      total = listHelper.totalLikes(oneBlog)
-      assert.strictEqual(total, 12)
+    const total = listHelper.totalLikes(oneBlog)
+    assert.strictEqual(total, 12)
   })
 
   test('of many blogs', () => {
-      total = listHelper.totalLikes(manyBlogs)
-      assert.strictEqual(total, 25)
+    const total = listHelper.totalLikes(manyBlogs)
+    assert.strictEqual(total, 25)
   })
 
-    test('of subtracting blogs', () => {
-      total = listHelper.totalLikes(subtractingBlogs)
-      assert.strictEqual(total, -3)
+  test('of subtracting blogs', () => {
+    const total = listHelper.totalLikes(subtractingBlogs)
+    assert.strictEqual(total, -3)
   })
 })
 
 describe('favorite blog', () => {
   test('of real blog examples', () => {
-    favorite = listHelper.favoriteBlog(blogs)
-    expected = {
+    const favorite = listHelper.favoriteBlog(blogs)
+    const expected = {
       _id: "5a422b3a1b54a676234d17f9",
       title: "Canonical string reduction",
       author: "Edsger W. Dijkstra",
@@ -102,6 +101,18 @@ describe('favorite blog', () => {
       __v: 0
     }
     assert.deepStrictEqual(favorite, expected)
+  })
+
+})
+
+describe('lodash tests', () => {
+  test('for author with most blogs', () => {
+    const actual = listHelper.mostBlogs(blogs)
+    const expected = {
+      author: "Robert C. Martin",
+      blogs:3
+    }
+    assert.deepStrictEqual(actual, expected)
   })
 
 })

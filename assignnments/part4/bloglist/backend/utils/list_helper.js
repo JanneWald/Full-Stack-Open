@@ -1,4 +1,6 @@
 /* List comprehension helper functions */
+const _ = require('lodash')
+
 
 // Returns 1 from any blog
 const dummy = (blogs) => {
@@ -24,8 +26,15 @@ const favoriteBlog = (blogs) => {
   return blogs.find(blog => blog.likes === mostLikes)
 }
 
+const mostBlogs = (blogs) => {
+  authorBlogCounts = _.countBy(blogs, 'author')
+  const [authorWithMostBlogs, maxBlogs] = _.maxBy(_.entries(authorBlogCounts), ([author, count]) => count);
+  return {author:authorWithMostBlogs, blogs:maxBlogs}
+}
+
 module.exports = {
   dummy,
   totalLikes,
-  favoriteBlog
+  favoriteBlog,
+  mostBlogs
 }
