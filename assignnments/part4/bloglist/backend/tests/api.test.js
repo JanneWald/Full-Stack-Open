@@ -8,12 +8,20 @@ const api = supertest(app)
 
 describe('api tests', () => {
     test('notes are returned as json', async () => {
-    const response = await api
-        .get('/api/blogs')
-        .expect(200)
-        .expect('Content-Type', /application\/json/)
-    assert.strictEqual(response.body.length, 2)
+        const response = await api
+            .get('/api/blogs')
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
 
+        assert.strictEqual(response.body.length, 2)
+    })
+
+    test('blogs have an id not _id field', async () => {
+        const response = await api.get('/api/blogs')
+        const blog = response.body[0]
+
+        assert.strictEqual(blog._id, undefined)
+        assert.ok(blog.id)
     })
 })
 
