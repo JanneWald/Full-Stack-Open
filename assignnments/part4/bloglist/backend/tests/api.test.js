@@ -48,6 +48,23 @@ describe('api tests', () => {
         const notesAtEnd = await helper.blogsInDb()
         assert.strictEqual(notesAtEnd.length, helper.initialBlogs.length + 1)
     })
+
+    test('Adding a blog w/o like count', async () => {
+        const newBlog = {
+            title:"An improper blog",
+            author:"John author",
+            url:"www.johnauthor.com",
+        }
+
+        const response = await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+
+        const savedBlog = await Blog.findById(response.body.id)
+        assert.strictEqual(savedBlog.likes, 0)
+    })
 })
 
 
