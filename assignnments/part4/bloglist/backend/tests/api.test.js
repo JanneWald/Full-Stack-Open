@@ -111,6 +111,36 @@ describe('api tests', () => {
         assert.strictEqual(notesAtEnd.length, helper.initialBlogs.length)
     })
 
+    test('Updating a blog\'s resource with likes', async () => {
+        const newBlog = {
+            title:"A new blog with lots of aspiration",
+            author:"Good author whos gonne get more likes",
+            url:"www.getliked.com",
+            likes:0
+        }
+
+        const moreLikedBlog = {
+            title:"A new blog with lots of aspiration",
+            author:"Good author whos gonne get more likes",
+            url:"www.getliked.com",
+            likes:12
+        }
+
+        const postResponse = await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(201)
+        
+        const putResponse = await api
+            .put(`/api/blogs/${postResponse.body.id}`)
+            .send(moreLikedBlog)
+            .expect(200)
+
+        const notesAtEnd = await helper.blogsInDb()
+        const newLikes = putResponse.body.likes
+        assert.strictEqual(notesAtEnd.length, helper.initialBlogs.length + 1)
+        assert.strictEqual(newLikes, 12)
+    })
 })
 
 
