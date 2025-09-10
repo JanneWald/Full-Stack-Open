@@ -65,6 +65,30 @@ describe('api tests', () => {
         const savedBlog = await Blog.findById(response.body.id)
         assert.strictEqual(savedBlog.likes, 0)
     })
+
+    test('Cant add a blog w/o an title', async () => {
+        const newBlog = {
+            author:"Johnauthor",
+            url:"www.johnauthor.com",
+        }
+
+        const response = await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(400)
+    })
+
+    test('Cant add a blog w/o an url', async () => {
+        const newBlog = {
+            author:"Johnauthor",
+            title:"Johns super cool blog",
+        }
+
+        const response = await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(400)
+    })
 })
 
 

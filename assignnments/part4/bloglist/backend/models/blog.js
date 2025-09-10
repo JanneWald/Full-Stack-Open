@@ -5,9 +5,13 @@ Sets up the mongoose database schema, along with the toJson() transformation
 const mongoose = require('mongoose')
 
 const blogSchema = mongoose.Schema({
-  title: String,
+  title: {
+    type: String, required: true
+  },
   author: String,
-  url: String,
+  url: {
+    type: String, required: true
+  },
   likes: {
     type: Number,
     default: 0
