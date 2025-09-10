@@ -89,6 +89,28 @@ describe('api tests', () => {
             .send(newBlog)
             .expect(400)
     })
+
+  test('Removing a blog', async () => {
+        const newBlog = {
+            title:"A new blog with lots of aspiration",
+            author:"Fad author whos gonne be DELETED",
+            url:"www.getdeleted.com",
+            likes:0
+        }
+
+        const response = await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(201)
+        
+        await api
+            .delete(`/api/blogs/${response.body.id}`)
+            .expect(204)
+
+        const notesAtEnd = await helper.blogsInDb()
+        assert.strictEqual(notesAtEnd.length, helper.initialBlogs.length)
+    })
+
 })
 
 
