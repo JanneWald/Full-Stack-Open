@@ -3,8 +3,15 @@ const assert = require('node:assert')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
-
+const Blog = require('../models/blog')
+const helper = require('./apiHelper')
 const api = supertest(app)
+
+
+beforeEach(async () => {
+  await Blog.deleteMany({})
+  await Blog.insertMany(helper.initialBlogs)
+})
 
 describe('api tests', () => {
     test('notes are returned as json', async () => {
@@ -22,6 +29,24 @@ describe('api tests', () => {
 
         assert.strictEqual(blog._id, undefined)
         assert.ok(blog.id)
+    })
+
+    test('Adding a blog', async () => {
+        const newBlog = {
+            title:"A new blog",
+            author:"Fad author whos gonne be irrelevant",
+            url:"www.dontcare.com",
+            likes:0
+        }
+
+        const response = await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+
+        const notesAtEnd = await helper.blogsInDb()
+        assert.strictEqual(notesAtEnd.length, helper.initialBlogs.length + 1)
     })
 })
 
