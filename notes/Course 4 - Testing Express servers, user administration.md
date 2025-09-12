@@ -183,3 +183,134 @@ beforeEach(async () => {
   await Promise.all(promiseArray)
 })
 ```
+## User Authentication
+User collection
+```json
+{
+  username: 'mluukkai',
+  _id: 123456,
+}
+```
+Note collection
+```json
+{
+  content: 'HTML is easy',
+  important: false,
+  _id: 221212,
+  user: 123456,
+}
+```
+#### User schema for mongoose
+```js
+const mongoose = require('mongoose')
+
+const userSchema = new mongoose.Schema({
+  username: String,
+  name: String,
+  passwordHash: String,
+  notes: [
+    {
+      type: mongoose.Schema.Types.ObjectId, // References another document
+      ref: 'Note' // The schema type of said reference
+    }
+  ],
+})
+
+userSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString()
+    delete returnedObject._id
+    delete returnedObject.__v
+    // the passwordHash should not be revealed
+    delete returnedObject.passwordHash
+  }
+})
+
+const User = mongoose.model('User', userSchema)
+
+module.exports = User
+```
+Add user to note schema
+```js
+user: {    
+  type: mongoose.Schema.Types.ObjectId,    
+  ref: 'User'  
+}
+```
+#### Creating a user
+- User has a name, id, and password
+- Password should be a hash, dont store raw plaintext of passwords
+`npm install bcrypt`
+The users router:
+```js
+const bcrypt = require('bcrypt')
+const usersRouter = require('express').Router()
+const User = require('../models/user')
+
+usersRouter.post('/', async (request, response) => {
+  const { username, name, password } = request.body
+
+  const saltRounds = 10
+  const passwordHash = await bcrypt.hash(password, saltRounds)
+
+  const user = new User({
+    username,
+    name,
+    passwordHash,
+  })
+
+  const savedUser = await user.save()
+
+  response.status(201).json(savedUser)
+})
+
+module.exports = usersRouter
+```
+#### Uniqueness in db
+```js
+// Inside schema value
+username: {    
+  type: String,    
+  required: true,    
+  unique: true // this ensures the uniqueness of username  },
+```
+- If there are already documents breaking this rule were cooked
+- Make sure db is healthy
+- This creates a `MongoServerError`, catch that instead of validation
+#### Router Example
+```js
+const notesRouter = require('express').Router()
+const Note = require('../models/note')
+const User = require('../models/user')
+//...
+
+notesRouter.post('/', async (request, response) => {
+  const body = request.body
+
+  const user = await User.findById(body.userId)
+  if (!user) {    return response.status(400).json({ error: 'userId missing or not valid' })  }
+  const note = new Note({
+    content: body.content,
+    important: body.important || false,
+    user: user._id  })
+
+  const savedNote = await note.save()
+  user.notes = user.notes.concat(savedNote._id)  await user.save()
+  response.status(201).json(savedNote)
+})
+
+// ...
+```
+#### Populating
+- When calling `GET .../api/users/id` we want all the notes included with that id
+- Under a relational db, use JOIN query
+- Use `populate()` for mongo
+```js
+const users = await User    
+  .find({}).populate('notes')
+```
+- Use mongo syntax to choose to include only fields we are interested int
+```js
+const users = await User
+  .find({}).populate('notes', { content: 1, important: 1 }) // Only gets content, important, (always id too)
+```
