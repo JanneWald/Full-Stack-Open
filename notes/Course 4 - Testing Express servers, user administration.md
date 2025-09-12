@@ -314,3 +314,58 @@ const users = await User
 const users = await User
   .find({}).populate('notes', { content: 1, important: 1 }) // Only gets content, important, (always id too)
 ```
+## Token authentication
+- Basics of token authentication
+  - Users log in on a login form, usually in react
+  - Make POST to `api/login` with `{username:...,password:...}` 
+  - If correct authentication, server generates token
+    - Signed digitally, makes it impossible to falsify
+  - Server sends back token and appripriate status code
+  - Browser saves token
+  - Everytime user does some http operation token is sent
+  - Server identifies requests as logged in
+- Token creator can be made with `npm install jsonwebtoken`
+```js
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt')
+const loginRouter = require('express').Router()
+const User = require('../models/user')
+
+loginRouter.post('/', async (request, response) => {
+  const { username, password } = request.body
+
+  const user = await User.findOne({ username })
+  const passwordCorrect = user === null
+    ? false
+    : await bcrypt.compare(password, user.passwordHash)
+
+  if (!(user && passwordCorrect)) {
+    return response.status(401).json({
+      error: 'invalid username or password'
+    })
+  }
+
+  const userForToken = {
+    username: user.username,
+    id: user._id,
+  }
+
+  const token = jwt.sign(userForToken, process.env.SECRET)
+
+  response
+    .status(200)
+    .send({ token, username: user.username, name: user.name })
+})
+
+module.exports = loginRouter
+```
+#### Problems?
+- Blind faith in token, maybe need to revoke token access
+```js
+const token = jwt.sign(    
+  userForToken,     
+  process.env.SECRET,    
+  { expiresIn: 60*60 } // Token expires in 1 hour
+)
+```
+- Dont forget following errors raised: `JsonWebTokenError`, `TokenExpiredError`
