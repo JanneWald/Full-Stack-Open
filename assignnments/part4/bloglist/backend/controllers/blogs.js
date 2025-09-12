@@ -6,9 +6,12 @@ Facilitates REST operations on blog URI's and makes appropriate calls to our Mon
 */
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 blogsRouter.get('/', async (request, response) => {
-  const blogs = await Blog.find({})
+  const blogs = await Blog
+    .find({})    
+    .populate('user', { username: 1, name: 1 })
   response.json(blogs)
 })
 
@@ -22,13 +25,17 @@ blogsRouter.get('/:id', async (request, response, next) => {
 })
 
 blogsRouter.post('/', async (request, response, next) => {
-  const body = request.body
+  const users = await User.find({})
+  const firstUser = users[0]
+
+  const {title, author, url, likes, user} = request.body
 
   const blog = new Blog({
-    title: body.title,
-    author: body.author,
-    url: body.url,
-    likes: body.likes,
+    title,
+    author,
+    url,
+    likes,
+    user: firstUser._id
   })
 
   const savedBlog = await blog.save()
