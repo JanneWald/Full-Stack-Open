@@ -4,16 +4,19 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const helper = require('./apiHelper')
 const api = supertest(app)
 
 
 beforeEach(async () => {
-  await Blog.deleteMany({})
-  await Blog.insertMany(helper.initialBlogs)
+    await User.deleteMany({})
+    await User.insertMany(helper.initialHashedUsers)
+    await Blog.deleteMany({})
+    await Blog.insertMany(helper.initialBlogs)
 })
 
-describe('api tests', () => {
+describe('blog api tests', () => {
     test('notes are returned as json', async () => {
         const response = await api
             .get('/api/blogs')
@@ -143,6 +146,42 @@ describe('api tests', () => {
     })
 })
 
+describe('user api tests', () => {
+    test('Adding a user without a username', async () =>{
+        await api
+            .post('/api/users')
+            .send({name:"nousernamedude", password:"123"})
+            .expect(400)
+    })
+
+    test('Adding a too short username', async () =>{
+        await api
+            .post('/api/users')
+            .send({username:"ab", name:"shortusernamedude", password:"123"})
+            .expect(400)
+    })
+
+    test('Adding a user without a password', async () =>{
+        const respone = await api
+            .post('/api/users')
+            .send({username:"user1", name:"nopassdude"})
+            .expect(400)
+
+
+        const {error} = respone.body
+        assert.strictEqual(error, 'Password has to be at least 3 characters')
+    })
+
+    test('Adding a user with a short password', async () =>{
+        const respone = await api
+            .post('/api/users')
+            .send({username:"user1", name:"shortpassdude", password:"ab"})
+            .expect(400)
+
+        const {error} = respone.body
+        assert.strictEqual(error, 'Password has to be at least 3 characters')
+    })
+})
 
 after(async () => {
     await mongoose.connection.close()
