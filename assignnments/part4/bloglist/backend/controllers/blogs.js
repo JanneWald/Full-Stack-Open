@@ -9,15 +9,6 @@ const Blog = require('../models/blog')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
 
-// Helper method to extract token from authorization header
-const getTokenFrom = request => {  
-  const authorization = request.get('authorization')  
-  if (authorization && authorization.startsWith('Bearer ')) {    
-    return authorization.replace('Bearer ', '')  
-  }  
-  return null
-}
-
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog
     .find({})    
@@ -61,6 +52,22 @@ blogsRouter.post('/', async (request, response, next) => {
 })
 
 blogsRouter.delete('/:id', async (request, response, next) => {
+  const blog = await Blog.findById(request.params.id)
+  const blogsCreator = blog.user.toString()
+  const decodedToken = jwt.verify(request.token, process.env.SECRET)  
+
+  if (!decodedToken.id) {
+    return response.status(401).json({ error: 'token missing or invalid' })
+  }
+
+  if (!blog) {
+    return response.status(404).json({ error: 'blog not found' })
+  }
+  
+  if(decodedToken.id.toString() != blogsCreator){
+    return response.status(403).json({error: 'not owner of this blog'})
+  }
+
   await Blog.findByIdAndDelete(request.params.id)
   response.status(204).end()
 })
