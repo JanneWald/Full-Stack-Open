@@ -6,9 +6,9 @@ Facilitates REST operations on blog URI's and makes appropriate calls to our Mon
 */
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
-const User = require('../models/user')
-const jwt = require('jsonwebtoken')
+const {userExtractor} = require('../utils/middleware')
 
+// Returns all blogs, should not need a token
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog
     .find({})    
@@ -25,18 +25,9 @@ blogsRouter.get('/:id', async (request, response, next) => {
   }
 })
 
-blogsRouter.post('/', async (request, response, next) => {
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)  
-  if (!decodedToken.id) {    
-    return response.status(401).json({ error: 'token invalid' })  
-  }  
-  const user = await User.findById(decodedToken.id)
+blogsRouter.post('/', userExtractor, async (request, response, next) => {
+  const user = request.user
 
-  if (!user) {
-    return response.status(400).json({ error: 'UserId missing or not valid' })
-  }
-
-  console.log('decoded user from token:', user)
   const {title, author, url, likes} = request.body
 
   const blog = new Blog({
@@ -48,27 +39,27 @@ blogsRouter.post('/', async (request, response, next) => {
   })
 
   const savedBlog = await blog.save()
+  user.blogs = user.blogs.concat(savedBlog._id)
+  await user.save()
+
   response.status(201).json(savedBlog)
 })
 
-blogsRouter.delete('/:id', async (request, response, next) => {
+blogsRouter.delete('/:id', userExtractor, async (request, response, next) => {
+  const user = request.user
   const blog = await Blog.findById(request.params.id)
-  const blogsCreator = blog.user.toString()
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)  
-
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: 'token missing or invalid' })
-  }
-
+  
   if (!blog) {
     return response.status(404).json({ error: 'blog not found' })
   }
-  
-  if(decodedToken.id.toString() != blogsCreator){
+  if(user._id.toString() != blog.user.toString()){
     return response.status(403).json({error: 'not owner of this blog'})
   }
 
-  await Blog.findByIdAndDelete(request.params.id)
+  await blog.deleteOne()
+  user.blogs = user.blogs.filter(b => b.toString() !== blog._id.toString())
+  await user.save()
+
   response.status(204).end()
 })
 
