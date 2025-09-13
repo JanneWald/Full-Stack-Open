@@ -7,6 +7,16 @@ Facilitates REST operations on blog URI's and makes appropriate calls to our Mon
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const jwt = require('jsonwebtoken')
+
+// Helper method to extract token from authorization header
+const getTokenFrom = request => {  
+  const authorization = request.get('authorization')  
+  if (authorization && authorization.startsWith('Bearer ')) {    
+    return authorization.replace('Bearer ', '')  
+  }  
+  return null
+}
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog
@@ -25,17 +35,25 @@ blogsRouter.get('/:id', async (request, response, next) => {
 })
 
 blogsRouter.post('/', async (request, response, next) => {
-  const users = await User.find({})
-  const firstUser = users[0]
+  const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)  
+  if (!decodedToken.id) {    
+    return response.status(401).json({ error: 'token invalid' })  
+  }  
+  const user = await User.findById(decodedToken.id)
 
-  const {title, author, url, likes, user} = request.body
+  if (!user) {
+    return response.status(400).json({ error: 'UserId missing or not valid' })
+  }
+
+  console.log('decoded user from token:', user)
+  const {title, author, url, likes} = request.body
 
   const blog = new Blog({
     title,
     author,
     url,
     likes,
-    user: firstUser._id
+    user: user._id
   })
 
   const savedBlog = await blog.save()
