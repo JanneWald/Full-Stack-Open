@@ -18,13 +18,13 @@ const initialBlogs = [
 
 const initialHashedUsers = [
   {
-    username: "user1",
-    name: "user1",
-    passwordHash: "$2b$10$165Mh2zrvTevSKY8FI/oIeblDdfuAnppxitU4wcYlq2PwfAdMUOwi"
+    username: "root",
+    name: "root user",
+    passwordHash: "$2b$10$fs49vFl800v1dFLgCv1rTuMexl896/kkfqin0aRIfL.xdr23FEyIi"
   },
   {
-    username: "user2",
-    name: "user2",
+    username: "user",
+    name: "generic user",
     passwordHash: "$2b$10$165Mh2zrvTevSKY8FI/oIeblDdfuAnppxitU4wcYlq2PwfAdMUOwi"
   },
     {

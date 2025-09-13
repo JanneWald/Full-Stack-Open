@@ -8,6 +8,15 @@ const User = require('../models/user')
 const helper = require('./apiHelper')
 const api = supertest(app)
 
+const loginAndGetToken = async () => {
+  const response = await api
+    .post('/api/login')
+    .send({username:"root", password:"123456"})
+    .expect(200)
+
+  return response.body.token
+}
+
 
 beforeEach(async () => {
     await User.deleteMany({})
@@ -42,11 +51,13 @@ describe('blog api tests', () => {
             likes:0
         }
 
+        const token = await loginAndGetToken()
+
         const response = await api
             .post('/api/blogs')
+            .set('Authorization', `Bearer ${token}`)
             .send(newBlog)
             .expect(201)
-            .expect('Content-Type', /application\/json/)
 
         const notesAtEnd = await helper.blogsInDb()
         assert.strictEqual(notesAtEnd.length, helper.initialBlogs.length + 1)
@@ -59,8 +70,11 @@ describe('blog api tests', () => {
             url:"www.johnauthor.com",
         }
 
+        const token = await loginAndGetToken()
+
         const response = await api
             .post('/api/blogs')
+            .set('Authorization', `Bearer ${token}`)
             .send(newBlog)
             .expect(201)
             .expect('Content-Type', /application\/json/)
@@ -75,8 +89,11 @@ describe('blog api tests', () => {
             url:"www.johnauthor.com",
         }
 
+        const token = await loginAndGetToken()
+
         const response = await api
             .post('/api/blogs')
+            .set('Authorization', `Bearer ${token}`)
             .send(newBlog)
             .expect(400)
     })
@@ -87,8 +104,11 @@ describe('blog api tests', () => {
             title:"Johns super cool blog",
         }
 
+        const token = await loginAndGetToken()
+
         const response = await api
             .post('/api/blogs')
+            .set('Authorization', `Bearer ${token}`)
             .send(newBlog)
             .expect(400)
     })
@@ -101,13 +121,17 @@ describe('blog api tests', () => {
             likes:0
         }
 
+        const token = await loginAndGetToken()
+
         const response = await api
             .post('/api/blogs')
+            .set('Authorization', `Bearer ${token}`)
             .send(newBlog)
             .expect(201)
         
         await api
             .delete(`/api/blogs/${response.body.id}`)
+            .set('Authorization', `Bearer ${token}`)
             .expect(204)
 
         const notesAtEnd = await helper.blogsInDb()
@@ -128,14 +152,18 @@ describe('blog api tests', () => {
             url:"www.getliked.com",
             likes:12
         }
+        
+        const token = await loginAndGetToken()
 
         const postResponse = await api
             .post('/api/blogs')
+            .set('Authorization', `Bearer ${token}`)
             .send(newBlog)
             .expect(201)
         
         const putResponse = await api
             .put(`/api/blogs/${postResponse.body.id}`)
+            .set('Authorization', `Bearer ${token}`)
             .send(moreLikedBlog)
             .expect(200)
 
@@ -143,6 +171,20 @@ describe('blog api tests', () => {
         const newLikes = putResponse.body.likes
         assert.strictEqual(notesAtEnd.length, helper.initialBlogs.length + 1)
         assert.strictEqual(newLikes, 12)
+    })
+
+    test('Adding anything w/o autherization', async () => {
+        const newBlog = {
+            title:"A very normal new blog",
+            author:"Sneaky devil without creds on the site",
+            url:"www.number1blogplease.com",
+            likes:0
+        }
+
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(401)
     })
 })
 
