@@ -1,0 +1,64 @@
+## Log in to frontend
+#### Conditional Login of a login form
+```jsx
+const App = () => {
+  // ...
+  const loginForm = () => (
+    // ...
+  )
+  const noteForm = () => (
+    // ...
+  )
+
+  return (
+    <div>
+      <h1>Notes</h1>
+      <Notification message={errorMessage} />
+
+      {!user && loginForm()}      
+      {user && noteForm()}
+  )
+```
+- Only renders the component if previous value true.
+#### Saving token to browser
+- If we refresh we use all state including token
+```js
+window.localStorage.setItem('name', 'juha tauriainen')
+```
+- Saves to browser key:pair database
+- Pulled with 
+```js
+window.localStorage.getItem('name')
+```
+- `removeItem()` removes it
+- Only stores json, must be converted then reconverted
+- Canv view databse in web console `window.localStorage`
+```js
+const handleLogin = async (event) => {
+    event.preventDefault()
+    try {
+        const user = await loginService.login({ username, password })
+
+        window.localStorage.setItem('loggedNoteappUser', JSON.stringify(user)) 
+```
+- Might need a proxy if we are hosting on the same device
+- In vite config
+```js
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [react()],
+
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+      },
+    }
+  },
+})
+```
+- Any request to `localhost:5437/api` will be redirected to `localhost:3001` where express server is 
