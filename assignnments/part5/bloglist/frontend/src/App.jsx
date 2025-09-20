@@ -57,6 +57,7 @@ const App = () => {
     try {
       const user = await loginService.login({ username, password })
       setUser(user)
+      window.localStorage.setItem('blogUser', JSON.stringify(user))
       setPassword('')
     } catch (exception) {
       console.error(exception)
@@ -84,6 +85,11 @@ const App = () => {
   return (
     <div>
       <ErrorDisplay message={errorMessage} />
+      <button onClick={() => {
+        setUser(null)
+        window.localStorage.removeItem('blogUser')
+      }}> 
+      Logout</button>
       <h2>Blogs</h2>
       <p>{username} logged in</p>
       {blogs.map(blog => (

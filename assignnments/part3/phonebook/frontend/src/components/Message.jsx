@@ -1,10 +1,10 @@
 
 const Message = ({message, color}) => {
     const style = {
-    'backgroundColor': 'lightgray',
-    'color': `${color}`,
-    'fontStyle': 'italic'
-}
+        'backgroundColor': 'lightgray',
+        'color': `${color}`,
+        'fontStyle': 'italic'
+    }
     
     if (message === null || message === ""){
         return
