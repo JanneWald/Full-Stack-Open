@@ -1,11 +1,11 @@
-import {useState} from 'react'
+import { useState } from 'react'
 
 const Blog = ({ blog, likeBlog, removeBlog }) => {
   const [detailedView, setDetailedView] = useState(false)
-  const {title, author, url, likes} = blog 
+  const { title, author, url, likes } = blog
   let user = blog.user
   if (!user)
-    user = {username: 'unknown'}
+    user = { username: 'unknown' }
 
   const blogStyle = {
     paddingTop: 10,
@@ -14,7 +14,7 @@ const Blog = ({ blog, likeBlog, removeBlog }) => {
     borderWidth: 1,
     marginBottom: 5
   }
-  
+
   if (detailedView) {
     return (
       <div style={blogStyle}>
@@ -28,10 +28,10 @@ const Blog = ({ blog, likeBlog, removeBlog }) => {
     )
   }
   else{
-    return(  
-    <div style={blogStyle}>
-      <i>{title}</i>, {author} <button onClick={() => {setDetailedView(true)}}>Show Details</button>
-    </div>)
+    return(
+      <div style={blogStyle}>
+        <i>{title}</i>, {author} <button onClick={() => {setDetailedView(true)}}>Show Details</button>
+      </div>)
   }
 }
 

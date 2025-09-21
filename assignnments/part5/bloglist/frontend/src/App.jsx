@@ -67,12 +67,12 @@ const App = () => {
   }, [])
 
   useEffect(() => {
-    const blogUser = window.localStorage.getItem('blogUser')    
-    if (blogUser) {      
+    const blogUser = window.localStorage.getItem('blogUser')
+    if (blogUser) {
       const user = JSON.parse(blogUser)
-      setUser(user)      
-      blogService.setToken(user.token)    
-    }  
+      setUser(user)
+      blogService.setToken(user.token)
+    }
   }, [])
 
   const likeBlog = async (event, oldBlog) => {
@@ -84,11 +84,11 @@ const App = () => {
         if (blog.id !== oldBlog.id)
           return blog
         else
-          return { ...returnedBlog, user: oldBlog.user}
+          return { ...returnedBlog, user: oldBlog.user }
       })))
       setSuccessMessage(`Liked ${oldBlog.title}`)
       setTimeout(() => setSuccessMessage(null), 5000)
-    } 
+    }
     catch (exception) {
       console.error(exception)
       setErrorMessage('Could not like blog')
@@ -100,7 +100,7 @@ const App = () => {
     event.preventDefault()
     console.log('Wanted to add a blog')
     try {
-      const response = await blogService.addBlog(blogObject);
+      const response = await blogService.addBlog(blogObject)
       setBlogs(blogs.concat(response))
       setSuccessMessage(`Added ${blogObject.title} by ${blogObject.author}`)
       setTimeout(() => setSuccessMessage(null), 5000)
@@ -118,7 +118,7 @@ const App = () => {
     try {
       if (!confirm(`Are you sure you want to remove Blog: ${blogObject.title}`))
         return
-      await blogService.deleteBlog(blogObject);
+      await blogService.deleteBlog(blogObject)
       setBlogs(blogs.filter(blog => blog.id !== blogObject.id))
       setSuccessMessage(`Removed ${blogObject.title}`)
       setTimeout(() => setSuccessMessage(null), 5000)
@@ -173,9 +173,9 @@ const App = () => {
       <button onClick={() => {
         setUser(null)
         window.localStorage.removeItem('blogUser')
-      }}> 
+      }}>
       Logout </button>
-      
+
       <Togglable buttonLabel={'Add blog'} ref={BlogFormRef}>
         <h2>Add Blog</h2>
         <BlogForm submitBlog={addBlog} />
