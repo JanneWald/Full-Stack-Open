@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import BlogForm from './components/BlogForm'
 
 const ErrorDisplay = ({ message }) => {
   if (!message) return null
@@ -47,10 +48,36 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
 
   useEffect(() => {
     blogService.getAll().then(fetchedBlogs => setBlogs(fetchedBlogs))
   }, [])
+
+  useEffect(() => {
+    const blogUser = window.localStorage.getItem('blogUser')    
+    if (blogUser) {      
+      const user = JSON.parse(blogUser)
+      setUser(user)      
+      blogService.setToken(user.token)    
+    }  
+  }, [])
+
+  const addBlog = async (event) => {
+    event.preventDefault()
+    console.log('Wanted to add a blog')
+    try {
+      const response = await blogService.addBlog({author, title, url});
+      setBlogs(blogs.concat(response))
+    }
+    catch (exception) {
+      console.error(exception)
+      setErrorMessage('Could not submit')
+      setTimeout(() => setErrorMessage(null), 5000)
+    }
+  }
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -59,6 +86,7 @@ const App = () => {
       setUser(user)
       window.localStorage.setItem('blogUser', JSON.stringify(user))
       setPassword('')
+      blogService.setToken(user.token)
     } catch (exception) {
       console.error(exception)
       setPassword('')
@@ -90,6 +118,8 @@ const App = () => {
         window.localStorage.removeItem('blogUser')
       }}> 
       Logout</button>
+      <h2>Add Blog</h2>
+      <BlogForm submitBlog={addBlog} title={title} setTitle={setTitle} author={author} setAuthor={setAuthor} url={url} setUrl={setUrl}/>
       <h2>Blogs</h2>
       <p>{username} logged in</p>
       {blogs.map(blog => (
