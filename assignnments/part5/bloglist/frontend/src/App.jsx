@@ -84,7 +84,7 @@ const App = () => {
         if (blog.id !== oldBlog.id)
           return blog
         else
-          return returnedBlog
+          return { ...returnedBlog, user: oldBlog.user}
       }))
       setSuccessMessage(`Liked ${oldBlog.title}`)
       setTimeout(() => setSuccessMessage(null), 5000)
