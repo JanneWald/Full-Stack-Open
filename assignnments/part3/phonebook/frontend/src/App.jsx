@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import Persons from './components/Persons'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
@@ -7,7 +6,7 @@ import Message from './components/Message.jsx'
 import phoneService from './services/phonebook.js'
 
 const App = () => {
-  
+
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
@@ -18,27 +17,27 @@ const App = () => {
   // Event handler to update filter field
   const updateFilter = (event) => {
     event.preventDefault()
-    console.log("Updated filter", event.target.value)
+    console.log('Updated filter', event.target.value)
     setPersonFilter(event.target.value)
   }
 
   // Event handler to update person field
   const updatePerson = (event) => {
     event.preventDefault()
-    console.log("Updated name", event.target.value)
+    console.log('Updated name', event.target.value)
     setNewName(event.target.value)
   }
 
-  // Event handler to update number field 
+  // Event handler to update number field
   const updateNumber = (event) => {
     event.preventDefault()
-    console.log("Updated number", event.target.value)
+    console.log('Updated number', event.target.value)
     setNewNumber(event.target.value)
   }
 
   // Event handler to remove person's id
   const removePerson = (id) => {
-    const name = persons.find(person => person.id == id).name
+    const name = persons.find(person => person.id === id).name
     if(!confirm(`Are you sure you want to remove ${name}`)){
       console.log('Ignoring deletion')
       return
@@ -52,7 +51,7 @@ const App = () => {
   }
 
   // Adds person to json assuming its new in phonebook
-  const addPerson = (event) =>{
+  const addPerson = (event) => {
     event.preventDefault()
     const previousEntry = persons.find(person => person.name === newName)
     if (previousEntry){
@@ -78,12 +77,13 @@ const App = () => {
           )
           .then(setMessage(`Updated ${previousEntry.name}'s number`))
           .then(setColor('purple'))
-          .then(setTimeout(() => setMessage(""), 5000))
+          .then(setTimeout(() => setMessage(''), 5000))
           .catch(error => {
+            console.error(error.data)
             setColor('red')
             setMessage(`${previousEntry.name} was recently removed from db`)
-            setPersons(persons.filter(person => person.id != previousEntry.id))
-            setTimeout(() => setMessage(""), 5000)
+            setPersons(persons.filter(person => person.id !== previousEntry.id))
+            setTimeout(() => setMessage(''), 5000)
           })
       }
     }
@@ -97,16 +97,16 @@ const App = () => {
         .then(response => setPersons(persons.concat(response)))
         .then(setMessage(`Added ${newName} to phonebook`))
         .then(setColor('green'))
-        .then(setTimeout(() => setMessage(""), 5000))
+        .then(setTimeout(() => setMessage(''), 5000))
         .catch(error => {
           const error_response = error.response.data.error
           console.log(`[Vite] Error: ${error_response}`)
           setColor('red')
           setMessage(error_response)
-          setTimeout(() => setMessage(""), 5000)
+          setTimeout(() => setMessage(''), 5000)
         })
     }
-    
+
     setNewName('')
     setNewNumber('')
   }
@@ -117,21 +117,21 @@ const App = () => {
       return persons
     else
       return persons.filter(
-        person => person.name.toLowerCase().includes(personFilter.toLowerCase()) 
+        person => person.name.toLowerCase().includes(personFilter.toLowerCase())
       )
   }
 
   // Effect to get json of persons from server, only once
   useEffect(() => {
-    console.log("Json server effect")
+    console.log('Json server effect')
     phoneService
       .getAll()
       .then(response => {setPersons(response)})
-      .catch(error => console.log('error getting from db'))
+      .catch(() => console.log('error getting from db'))
 
   }, [])
 
-  console.log("Persons: ", persons)
+  console.log('Persons: ', persons)
   return (
     <div>
       <Message message={message} color={color}/>
@@ -140,7 +140,7 @@ const App = () => {
       <PersonForm newName={newName} updatePerson={updatePerson} newNumber={newNumber} updateNumber={updateNumber} addPerson={addPerson}/>
       <h2>Numbers</h2>
       <Persons persons={getPersons()} removePerson={removePerson}/>
-    </div> 
+    </div>
   )
 }
 
