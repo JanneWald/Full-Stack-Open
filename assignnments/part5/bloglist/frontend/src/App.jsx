@@ -22,6 +22,7 @@ const SuccessDisplay = ({ message }) => {
     </div>
   )
 }
+
 const LoginForm = ({ onLogin, username, setUsername, password, setPassword }) => (
   <div>
     <h1>Login</h1>
