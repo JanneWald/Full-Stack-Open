@@ -58,9 +58,6 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
   const [successMessage, setSuccessMessage] = useState(null)
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
 
   useEffect(() => {
     blogService.getAll().then(fetchedBlogs => setBlogs(fetchedBlogs))
@@ -75,15 +72,14 @@ const App = () => {
     }  
   }, [])
 
-  const addBlog = async (event) => {
+  const addBlog = async (event, blogObject) => {
     event.preventDefault()
     console.log('Wanted to add a blog')
     try {
-      const response = await blogService.addBlog({author, title, url});
+      const response = await blogService.addBlog(blogObject);
       setBlogs(blogs.concat(response))
-      setSuccessMessage(`Added ${title} by ${author}`)
+      setSuccessMessage(`Added ${blogObject.title} by ${blogObject.author}`)
       setTimeout(() => setSuccessMessage(null), 5000)
-
     }
     catch (exception) {
       console.error(exception)
@@ -131,19 +127,13 @@ const App = () => {
         setUser(null)
         window.localStorage.removeItem('blogUser')
       }}> 
-      Logout</button>
+      Logout </button>
+      
       <Togglable buttonLabel={'Add blog'}>
         <h2>Add Blog</h2>
-        <BlogForm 
-          submitBlog={addBlog} 
-          title={title} 
-          setTitle={setTitle} 
-          author={author} 
-          setAuthor={setAuthor} 
-          url={url} 
-          setUrl={setUrl}
-        />
+        <BlogForm submitBlog={addBlog} />
       </Togglable>
+
       <h2>Blogs</h2>
       <p>{username} logged in</p>
       {blogs.map(blog => (
