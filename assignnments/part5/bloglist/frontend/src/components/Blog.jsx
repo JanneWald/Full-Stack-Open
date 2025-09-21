@@ -1,6 +1,6 @@
 import {useState} from 'react'
 
-const Blog = ({ blog, likeBlog }) => {
+const Blog = ({ blog, likeBlog, removeBlog }) => {
   const [detailedView, setDetailedView] = useState(false)
   const {title, author, url, likes} = blog 
   let user = blog.user
@@ -23,6 +23,7 @@ const Blog = ({ blog, likeBlog }) => {
         <p>{url}</p>
         <p>Likes: {likes} <button onClick={(event) => likeBlog(event, blog)}> Like</button></p>
         <p>Added by: {user.username}</p>
+        <button onClick={(event) => removeBlog(event, blog)}> Delete </button>
       </div>
     )
   }

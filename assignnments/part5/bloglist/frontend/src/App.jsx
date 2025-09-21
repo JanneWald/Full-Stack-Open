@@ -113,6 +113,23 @@ const App = () => {
     }
   }
 
+  const removeBlog = async (event, blogObject) => {
+    event.preventDefault()
+    try {
+      if (!confirm(`Are you sure you want to remove Blog: ${blogObject.title}`))
+        return
+      await blogService.deleteBlog(blogObject);
+      setBlogs(blogs.filter(blog => blog.id !== blogObject.id))
+      setSuccessMessage(`Removed ${blogObject.title}`)
+      setTimeout(() => setSuccessMessage(null), 5000)
+    }
+    catch (exception) {
+      console.error(exception)
+      setErrorMessage('Could not delete')
+      setTimeout(() => setErrorMessage(null), 5000)
+    }
+  }
+
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
@@ -167,7 +184,7 @@ const App = () => {
       <h2>Blogs</h2>
       <p>{username} logged in</p>
       {blogs.map(blog => (
-        <Blog key={blog.id} blog={blog} likeBlog={likeBlog}/>
+        <Blog key={blog.id} blog={blog} likeBlog={likeBlog} removeBlog={removeBlog}/>
       ))}
     </div>
   )
