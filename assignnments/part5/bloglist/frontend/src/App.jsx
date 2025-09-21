@@ -13,6 +13,14 @@ const ErrorDisplay = ({ message }) => {
   )
 }
 
+const SuccessDisplay = ({ message }) => {
+  if (!message) return null
+  return (
+    <div style={{ color: 'green', marginBottom: '1rem' }}>
+      {message}
+    </div>
+  )
+}
 const LoginForm = ({ onLogin, username, setUsername, password, setPassword }) => (
   <div>
     <h1>Login</h1>
@@ -48,6 +56,7 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
+  const [successMessage, setSuccessMessage] = useState(null)
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
@@ -71,6 +80,9 @@ const App = () => {
     try {
       const response = await blogService.addBlog({author, title, url});
       setBlogs(blogs.concat(response))
+      setSuccessMessage(`Added ${title} by ${author}`)
+      setTimeout(() => setSuccessMessage(null), 5000)
+
     }
     catch (exception) {
       console.error(exception)
@@ -113,6 +125,7 @@ const App = () => {
   return (
     <div>
       <ErrorDisplay message={errorMessage} />
+      <SuccessDisplay message={successMessage}/>
       <button onClick={() => {
         setUser(null)
         window.localStorage.removeItem('blogUser')
