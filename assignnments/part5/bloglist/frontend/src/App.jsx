@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import Togglable from './components/Toggelable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import BlogForm from './components/BlogForm'
@@ -131,8 +132,18 @@ const App = () => {
         window.localStorage.removeItem('blogUser')
       }}> 
       Logout</button>
-      <h2>Add Blog</h2>
-      <BlogForm submitBlog={addBlog} title={title} setTitle={setTitle} author={author} setAuthor={setAuthor} url={url} setUrl={setUrl}/>
+      <Togglable buttonLabel={'Add blog'}>
+        <h2>Add Blog</h2>
+        <BlogForm 
+          submitBlog={addBlog} 
+          title={title} 
+          setTitle={setTitle} 
+          author={author} 
+          setAuthor={setAuthor} 
+          url={url} 
+          setUrl={setUrl}
+        />
+      </Togglable>
       <h2>Blogs</h2>
       <p>{username} logged in</p>
       {blogs.map(blog => (

@@ -62,3 +62,109 @@ export default defineConfig({
 })
 ```
 - Any request to `localhost:5437/api` will be redirected to `localhost:3001` where express server is 
+
+## Props.children and prototpyes
+- Say we want to have expandable forms to save screen space
+```jsx
+const App = () => {
+
+  const [loginVisible, setLoginVisible] = useState(false)
+
+  // ...
+
+  const loginForm = () => {
+    const hideWhenVisible = { display: loginVisible ? 'none' : '' }
+    const showWhenVisible = { display: loginVisible ? '' : 'none' }
+
+    return (
+      <div>
+        <div style={hideWhenVisible}>
+          <button onClick={() => setLoginVisible(true)}>log in</button>
+        </div>
+        <div style={showWhenVisible}>
+          <LoginForm
+          // ...
+          />
+          <button onClick={() => setLoginVisible(false)}>cancel</button>
+        </div>
+      </div>
+    )
+  }
+
+  // ...
+}
+```
+- This uses `sytle:none` to hide a component via css
+#### Making a toggleable component
+```jsx
+import { useState } from 'react'
+
+const Togglable = (props) => {
+  const [visible, setVisible] = useState(false)
+
+  const hideWhenVisible = { display: visible ? 'none' : '' }
+  const showWhenVisible = { display: visible ? '' : 'none' }
+
+  const toggleVisibility = () => {
+    setVisible(!visible)
+  }
+
+  return (
+    <div>
+      <div style={hideWhenVisible}>
+        <button onClick={toggleVisibility}>{props.buttonLabel}</button>
+      </div>
+      <div style={showWhenVisible}>
+        {props.children} // Inserts embedded react component children inside toggleable class
+        <button onClick={toggleVisibility}>cancel</button>
+      </div>
+    </div>
+  )
+}
+
+export default Togglable
+```
+#### State in forms
+Put state in forms compnent instead of App.jsx!!!
+#### Ref
+Create ref and link it to a component
+```jsx
+import { useState, useEffect, useRef } from 'react'
+
+const App = () => {
+  // ...
+
+  const noteFormRef = useRef()
+
+  const noteForm = () => (
+
+    <Togglable buttonLabel='new note' ref={noteFormRef}>
+      <NoteForm createNote={addNote} />
+    </Togglable>
+  )
+
+  // ...
+}
+```
+LINK THROUGH RENDERS
+```jsx
+  useImperativeHandle(props.ref, () => {    
+    return { toggleVisibility }  
+  })
+  ```
+Call with:
+  ```jsx
+  const App = () => {
+  // ...
+  const addNote = (noteObject) => {
+
+    noteFormRef.current.toggleVisibility()
+    noteService
+      .create(noteObject)
+      .then(returnedNote => {     
+        setNotes(notes.concat(returnedNote))
+      })
+  }
+  // ...
+}
+```
