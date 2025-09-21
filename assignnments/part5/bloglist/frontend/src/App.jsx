@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import Togglable from './components/Toggelable'
 import blogService from './services/blogs'
@@ -58,6 +58,8 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
   const [successMessage, setSuccessMessage] = useState(null)
+  const BlogFormRef = useRef()
+
 
   useEffect(() => {
     blogService.getAll().then(fetchedBlogs => setBlogs(fetchedBlogs))
@@ -80,6 +82,7 @@ const App = () => {
       setBlogs(blogs.concat(response))
       setSuccessMessage(`Added ${blogObject.title} by ${blogObject.author}`)
       setTimeout(() => setSuccessMessage(null), 5000)
+      BlogFormRef.current.toggleVisibility()
     }
     catch (exception) {
       console.error(exception)
@@ -129,7 +132,7 @@ const App = () => {
       }}> 
       Logout </button>
       
-      <Togglable buttonLabel={'Add blog'}>
+      <Togglable buttonLabel={'Add blog'} ref={BlogFormRef}>
         <h2>Add Blog</h2>
         <BlogForm submitBlog={addBlog} />
       </Togglable>
