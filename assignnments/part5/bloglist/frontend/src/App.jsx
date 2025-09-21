@@ -63,7 +63,7 @@ const App = () => {
 
 
   useEffect(() => {
-    blogService.getAll().then(fetchedBlogs => setBlogs(fetchedBlogs))
+    blogService.getAll().then(fetchedBlogs => setBlogs(sortBlogs(fetchedBlogs)))
   }, [])
 
   useEffect(() => {
@@ -80,12 +80,12 @@ const App = () => {
     const updatedBlog = { ...oldBlog, likes: oldBlog.likes + 1 }
     try{
       const returnedBlog = await blogService.replaceBlog(updatedBlog)
-      setBlogs(blogs.map(blog => {
+      setBlogs(sortBlogs(blogs.map(blog => {
         if (blog.id !== oldBlog.id)
           return blog
         else
           return { ...returnedBlog, user: oldBlog.user}
-      }))
+      })))
       setSuccessMessage(`Liked ${oldBlog.title}`)
       setTimeout(() => setSuccessMessage(null), 5000)
     } 
@@ -127,6 +127,11 @@ const App = () => {
       setErrorMessage('Wrong credentials')
       setTimeout(() => setErrorMessage(null), 5000)
     }
+  }
+
+  const sortBlogs = (blogs) => {
+    const sortByLikes = (blogA, blogB) => blogB.likes - blogA.likes
+    return blogs.sort(sortByLikes)
   }
 
   if (!user) {
