@@ -75,6 +75,27 @@ const App = () => {
     }  
   }, [])
 
+  const likeBlog = async (event, oldBlog) => {
+    event.preventDefault()
+    const updatedBlog = { ...oldBlog, likes: oldBlog.likes + 1 }
+    try{
+      const returnedBlog = await blogService.replaceBlog(updatedBlog)
+      setBlogs(blogs.map(blog => {
+        if (blog.id !== oldBlog.id)
+          return blog
+        else
+          return returnedBlog
+      }))
+      setSuccessMessage(`Liked ${oldBlog.title}`)
+      setTimeout(() => setSuccessMessage(null), 5000)
+    } 
+    catch (exception) {
+      console.error(exception)
+      setErrorMessage('Could not like blog')
+      setTimeout(() => setErrorMessage(null), 5000)
+    }
+  }
+
   const addBlog = async (event, blogObject) => {
     event.preventDefault()
     console.log('Wanted to add a blog')
@@ -141,7 +162,7 @@ const App = () => {
       <h2>Blogs</h2>
       <p>{username} logged in</p>
       {blogs.map(blog => (
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} likeBlog={likeBlog}/>
       ))}
     </div>
   )

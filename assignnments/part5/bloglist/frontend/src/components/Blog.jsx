@@ -1,6 +1,6 @@
 import {useState} from 'react'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, likeBlog }) => {
   const [detailedView, setDetailedView] = useState(false)
   const {title, author, url, likes} = blog
   
@@ -18,7 +18,7 @@ const Blog = ({ blog }) => {
         <p><i>{title}</i> <button onClick={() => {setDetailedView(false)}}>Hide Details</button></p>
         <p>By: {author}</p>
         <p>{url}</p>
-        <p>Likes: {likes} <button>Like</button></p>
+        <p>Likes: {likes} <button onClick={(event) => likeBlog(event, blog)}> Like</button></p>
       </div>
     )
   }
