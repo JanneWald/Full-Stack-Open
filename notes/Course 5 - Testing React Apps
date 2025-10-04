@@ -288,3 +288,7 @@ placeholder='write note content here'
 />
 ```
 - Use `const input = screen.getByPlaceholderText('write note content here')`
+#### Test coverage?
+- `npm test -- --coverage`
+- Will need to add /coverage to .gitignore
+
