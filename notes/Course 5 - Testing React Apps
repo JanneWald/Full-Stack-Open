@@ -219,3 +219,36 @@ test('renders content', () => {
 - `getByText(param)` looks for component with ONLY param
 - `findByText(param)` looks for component including param, RETURNS A PROMISE so await
 - `queryByText()` same as find, but doesnt throw exception
+- `getTestById()` you get it.
+#### Debugging
+- `screen.debug()` prints html of screen to console
+- `screen.debug(element)` ^^^ of element to console
+To simulate user input:
+`npm install --save-dev @testing-library/user-event`
+```jsx
+import { render, screen } from '@testing-library/react'
+
+import userEvent from '@testing-library/user-event'
+import Note from './Note'
+
+// ...
+
+test('clicking the button calls event handler once', async () => {
+  const note = {
+    content: 'Component testing is done with react-testing-library',
+    important: true
+  }
+
+  const mockHandler = vi.fn() // comes from vitest
+
+  render(<Note note={note} toggleImportance={mockHandler} />)
+
+  const user = userEvent.setup() // session start
+  const button = screen.getByText('make not important')
+  await user.click(button) // click button
+
+  expect(mockHandler.mock.calls).toHaveLength(1) // Array of calls is len(one) "has only been called once"
+})
+```
+
+#### Testing Forms
