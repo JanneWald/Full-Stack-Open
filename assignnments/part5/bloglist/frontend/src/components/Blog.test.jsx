@@ -1,14 +1,16 @@
 import { render, screen } from '@testing-library/react'
 import { test, expect } from 'vitest'
 import Blog from './Blog'
+import userEvent from '@testing-library/user-event'
+
+const blog = {
+  author: 'Mark',
+  title: 'Cool',
+  url: 'www.cool.url',
+  likes: 14
+}
 
 test('renders summary view with title and author, but not URL or likes by default', () => {
-  const blog = {
-    author: 'Mark',
-    title: 'Cool',
-    url: 'www.cool.url',
-    likes: 14
-  }
 
   render(<Blog blog={blog} />)
 
@@ -30,4 +32,26 @@ test('renders summary view with title and author, but not URL or likes by defaul
 
   expect(urlElement).toBeNull()
   expect(likesElement).toBeNull()
+})
+
+test('url and likes ARE visible after click', async () => {
+  const user = userEvent.setup()
+  render(<Blog blog={blog} />)
+
+  const detailButton = screen.getByText('Show Details')
+  await user.click(detailButton)
+
+  // The summary view should NOT exist
+  const summaryElement = document.querySelector('.blog-summary')
+  expect(summaryElement).toBeNull()
+
+  // The detailed view should NOT exist
+  const detailsElement = document.querySelector('.blog-details')
+  expect(detailsElement).not.toBeNull()
+
+  // Confirm summary text shows title, author, url, likes
+  expect(detailsElement.textContent).toContain('Cool')
+  expect(detailsElement.textContent).toContain('Mark')
+  expect(detailsElement.textContent).toContain('14')
+  expect(detailsElement.textContent).toContain('www.cool.url')
 })
