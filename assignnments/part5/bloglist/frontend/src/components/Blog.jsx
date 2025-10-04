@@ -17,7 +17,7 @@ const Blog = ({ blog, likeBlog, removeBlog }) => {
 
   if (detailedView) {
     return (
-      <div style={blogStyle}>
+      <div style={blogStyle} className="blog-details">
         <p><i>{title}</i> <button onClick={() => {setDetailedView(false)}}>Hide Details</button></p>
         <p>By: {author}</p>
         <p>{url}</p>
@@ -29,7 +29,7 @@ const Blog = ({ blog, likeBlog, removeBlog }) => {
   }
   else{
     return(
-      <div style={blogStyle}>
+      <div style={blogStyle} className="blog-summary">
         <i>{title}</i>, {author} <button onClick={() => {setDetailedView(true)}}>Show Details</button>
       </div>)
   }
