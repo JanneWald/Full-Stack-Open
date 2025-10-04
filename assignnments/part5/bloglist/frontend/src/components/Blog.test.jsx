@@ -55,3 +55,18 @@ test('url and likes ARE visible after click', async () => {
   expect(detailsElement.textContent).toContain('14')
   expect(detailsElement.textContent).toContain('www.cool.url')
 })
+
+test('like button handler is called twice on 2 clicks', async () => {
+  const user = userEvent.setup()
+  const likeBlog = vi.fn()
+  render(<Blog blog={blog} likeBlog={likeBlog}/>)
+
+  const detailButton = screen.getByText('Show Details')
+  await user.click(detailButton)
+
+  const likeButton = screen.getByText('Like')
+  await user.click(likeButton)
+  await user.click(likeButton)
+
+  expect(likeBlog.mock.calls).toHaveLength(2)
+})
