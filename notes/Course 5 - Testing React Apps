@@ -168,3 +168,54 @@ Call with:
   // ...
 }
 ```
+## Testing React Apps
+- Can use `ViteTest` for component testing
+```bash
+npm install --save-dev vitest jsdom
+npm install --save-dev @testing-library/react @testing-library/jest-dom
+```
+- Add `"test": "vitest run"` to `scripts:` in `package.json`
+- Make a new file, `testSetup.js`
+```js
+import { afterEach } from 'vitest'
+import { cleanup } from '@testing-library/react'
+import '@testing-library/jest-dom/vitest'
+
+afterEach(() => {
+  cleanup()
+})
+```
+- Add env to `vite.config.js`
+```js
+export default defineConfig({
+  // ...
+  test: {
+    environment: 'jsdom',
+    globals: true, // Makes us not need describe, test, expect
+    setupFiles: './testSetup.js', 
+  }
+})
+```
+#### Rendering component
+- Write test for `src/components/Note.test.jsx`, same dir as Note.jsx
+   - Can keep them in a seperate folder. Preference
+```jsx
+import { render, screen } from '@testing-library/react'
+import Note from './Note'
+
+test('renders content', () => {
+  const note = {
+    content: 'Component testing is done with react-testing-library',
+    important: true
+  }
+
+  render(<Note note={note} />)
+
+  const element = screen.getByText('Component testing is done with react-testing-library')
+  expect(element).toBeDefined()
+})
+```
+- Dont actually need `expect()`, `getByText()` is already a test that can fail
+- `getByText(param)` looks for component with ONLY param
+- `findByText(param)` looks for component including param, RETURNS A PROMISE so await
+- `queryByText()` same as find, but doesnt throw exception
