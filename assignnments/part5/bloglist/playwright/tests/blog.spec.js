@@ -25,6 +25,14 @@ describe('Blog app', () => {
         password: '123456'
       }
     })
+
+    await request.post('/api/users', {
+      data: {
+        name: 'random user',
+        username: 'rando',
+        password: '123456'
+      }
+    })
   })
 
   test('Login form is shown', async ({ page }) => {
@@ -71,7 +79,7 @@ describe('Blog app', () => {
     await expect(details).toContainText('Likes: 1')
   })
 
-  test.only('A blog can be deleted by the same user', async ({ page }) => {
+  test('A blog can be deleted by the same user', async ({ page }) => {
     await loginWith(page, 'root', '123456')
 
     await addBlog(page, 'testTitle', 'testAuthor', 'testUrl')
@@ -80,5 +88,15 @@ describe('Blog app', () => {
     await page.getByRole('button', { name: 'Delete' }).click()
 
     await expect(page.getByText('Removed testTitle')).toBeVisible()
+  })
+
+  test.only('A blog cannot be deleted by a different user', async ({ page }) => {
+    await loginWith(page, 'root', '123456')
+    await addBlog(page, 'testTitle', 'testAuthor', 'testUrl')
+    await page.getByRole('button', { name: 'Logout' }).click()
+
+    await loginWith(page, 'rando', '123456')
+    await page.getByRole('button', { name: 'Show Details' }).click()
+    await expect(page.getByRole('button', { name: 'Delete' })).not.toBeVisible()
   })
 })
