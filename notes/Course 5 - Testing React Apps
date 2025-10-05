@@ -292,3 +292,90 @@ placeholder='write note content here'
 - `npm test -- --coverage`
 - Will need to add /coverage to .gitignore
 
+## Playwright testing
+- End to end test dont need to be in the same dir
+`npm init playwright@latest`
+```js
+{
+  // ...
+  "scripts": {
+    "test": "playwright test",
+    "test:report": "playwright show-report"
+  },
+  // ...
+}
+```
+- Can run test via graphical ui `npm run test -- --ui`
+```js
+// @ts-check
+import { test, expect } from '@playwright/test';
+
+test('has title', async ({ page }) => {
+
+  await page.goto('https://playwright.dev/');
+
+  // Expect a title "to contain" a substring.
+  await expect(page).toHaveTitle(/Playwright/);
+});
+
+test('get started link', async ({ page }) => {
+  await page.goto('https://playwright.dev/');
+
+  // Click the get started link.
+  await page.getByRole('link', { name: 'Get started' }).click();
+
+  // Expects page to have a heading with the name of Installation.
+  await expect(page.getByRole('heading', { name: 'Installation' })).toBeVisible();
+});
+```
+#### Our code example
+- Add script in backend
+```js
+  "start:test": "cross-env NODE_ENV=test node --watch index.js"
+```
+- Run backend and frontned
+- Make file `test/note_app.spec.js`:
+```js
+const { test, describe, expect } = require('@playwright/test')
+
+describe('Note app', () => {
+  test('front page can be opened', async ({ page }) => {
+    await page.goto('http://localhost:5173')
+
+    const locator = page.getByText('Notes')
+    await expect(locator).toBeVisible()
+    await expect(page.getByText('Note app, Department of Computer Science, University of Helsinki 2025')).toBeVisible()
+  })
+})
+```
+- Failing test can take long because it does 30 sec retries
+   - Shorten in `playwright.config.js`:
+```js
+      export default defineConfig({
+      // ...
+      timeout: 3000,  fullyParallel: false,  workers: 1,  // ...
+    })
+```
+#### Writing on Form
+```js
+describe('Note app', () => {
+  // ...
+  test('user can log in', async ({ page }) => {
+    await page.goto('http://localhost:5173')
+
+    await page.getByRole('button', { name: 'login' }).click()
+
+    const textboxes = await page.getByRole('textbox').all() // Could also use first(), last() if only 2
+    await textboxes[0].fill('mluukkai')
+    await textboxes[1].fill('salainen')
+
+    await page.getByRole('button', { name: 'login' }).click()
+  
+    await expect(page.getByText('Matti Luukkainen logged in')).toBeVisible()
+  })  
+})
+```
+- Can also use other methods
+  - `getByLabel(label)`
+  - `getById(id)`
+
