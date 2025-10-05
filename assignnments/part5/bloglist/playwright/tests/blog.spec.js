@@ -90,7 +90,7 @@ describe('Blog app', () => {
     await expect(page.getByText('Removed testTitle')).toBeVisible()
   })
 
-  test.only('A blog cannot be deleted by a different user', async ({ page }) => {
+  test('A blog cannot be deleted by a different user', async ({ page }) => {
     await loginWith(page, 'root', '123456')
     await addBlog(page, 'testTitle', 'testAuthor', 'testUrl')
     await page.getByRole('button', { name: 'Logout' }).click()
@@ -99,4 +99,28 @@ describe('Blog app', () => {
     await page.getByRole('button', { name: 'Show Details' }).click()
     await expect(page.getByRole('button', { name: 'Delete' })).not.toBeVisible()
   })
+
+  test.only('blogs are arranged by likes in descending order', async ({ page }) => {
+    await loginWith(page, 'root', '123456')
+
+    await addBlog(page, 'First Blog', 'Author1', 'url1')
+    await addBlog(page, 'Second Blog', 'Author2', 'url2')
+
+    await page.getByRole('button', { name: 'Show Details' }).first().click()
+    await page.getByRole('button', { name: 'Show Details' }).last().click()
+
+    const secondBlog = await page.locator('.blog-details').last()
+    await secondBlog.getByRole('button', { name: 'Like' }).click()
+
+    await page.waitForTimeout(500)
+
+    const updatedBlogs = await page.locator('.blog-summary, .blog-details').all()
+    const firstBlogText = await updatedBlogs[0].textContent()
+    const secondBlogText = await updatedBlogs[1].textContent()
+
+    // Expect the second blog (with more likes) to now be first
+    expect(firstBlogText).toContain('Second Blog')
+    expect(secondBlogText).toContain('First Blog')
+  })
+
 })
