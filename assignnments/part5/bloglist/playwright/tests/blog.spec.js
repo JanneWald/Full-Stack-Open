@@ -25,14 +25,34 @@ describe('Blog app', () => {
     await expect(locator.last()).toBeVisible()
   })
 
-  test('Succesful Login', async ({ page }) => {
-    await loginWith(page, 'root', '123456')
-    await expect(page.getByText('root logged in')).toBeVisible()
-   })
+  describe('Login', () => {
+    test('Succesful Login', async ({ page }) => {
+      await loginWith(page, 'root', '123456')
+      await expect(page.getByText('root logged in')).toBeVisible()
+    })
 
-  test('Unsuccesful Login', async ({ page }) => {
-    await loginWith(page, 'root', '1234567')
-    await expect(page.getByText('Wrong credentials')).toBeVisible()
+    test('Unsuccesful Login', async ({ page }) => {
+      await loginWith(page, 'root', '1234567')
+      await expect(page.getByText('Wrong credentials')).toBeVisible()
+    })
   })
 
+  test.only('a new blog can be created', async ({ page }) => {
+    await loginWith(page, 'root', '123456')
+    
+    // Fill in Form
+    await page.getByRole('button', { name: 'Add blog' }).click()
+    await page.getByLabel('Title').fill('testTitle')
+    await page.getByLabel('Author').fill('testAuthor')
+    await page.getByLabel('Url').fill('testUrl')
+    await page.getByRole('button', { name: 'Add' }).click()
+    
+    // Wait until a new blog-summary appears
+    const summaries = page.locator('.blog-summary')
+
+    // Get the last one and assert it contains our values
+    const lastSummary = summaries.last()
+    await expect(lastSummary).toContainText('testTitle')
+    await expect(lastSummary).toContainText('testAuthor')
+  })
 })
