@@ -6,6 +6,14 @@ const loginWith = async (page, username, password) => {
   await page.getByRole('button', { name: 'login' }).click()
 } 
 
+const addBlog = async (page, title, author, url) => {
+  await page.getByRole('button', { name: 'Add blog' }).click()
+  await page.getByLabel('Title').fill(title)
+  await page.getByLabel('Author').fill(author)
+  await page.getByLabel('Url').fill(url)
+  await page.getByRole('button', { name: 'Add' }).click()
+}
+
 describe('Blog app', () => {
   beforeEach(async ({ page, request }) => {
     await page.goto('/')
@@ -37,16 +45,10 @@ describe('Blog app', () => {
     })
   })
 
-  test.only('a new blog can be created', async ({ page }) => {
+  test('a new blog can be created', async ({ page }) => {
     await loginWith(page, 'root', '123456')
-    
-    // Fill in Form
-    await page.getByRole('button', { name: 'Add blog' }).click()
-    await page.getByLabel('Title').fill('testTitle')
-    await page.getByLabel('Author').fill('testAuthor')
-    await page.getByLabel('Url').fill('testUrl')
-    await page.getByRole('button', { name: 'Add' }).click()
-    
+
+    await addBlog(page, 'testTitle', 'testAuthor', 'testUrl')
     // Wait until a new blog-summary appears
     const summaries = page.locator('.blog-summary')
 
@@ -54,5 +56,18 @@ describe('Blog app', () => {
     const lastSummary = summaries.last()
     await expect(lastSummary).toContainText('testTitle')
     await expect(lastSummary).toContainText('testAuthor')
+  })
+
+  test.only('A blog can be liked', async ({ page }) => {
+    await loginWith(page, 'root', '123456')
+
+    await addBlog(page, 'testTitle', 'testAuthor', 'testUrl')
+    
+    await page.getByText('Show details').click()
+    await page.getByRole('button', { name: 'Like' }).click()
+
+    // Get the last one and assert it contains our values
+    const details = page.locator('.blog-details')
+    await expect(details).toContainText('Likes: 1')
   })
 })
