@@ -379,3 +379,110 @@ describe('Note app', () => {
   - `getByLabel(label)`
   - `getById(id)`
 
+#### Init
+- Dont forget to add beforeEach as the first method in a describe()
+`beforeEach(async ({ page }) => { await page.goto('http://localhost:5173') })`
+
+#### Form submisison
+```js
+const { test, describe, expect, beforeEach } = require('@playwright/test')
+
+describe('Note app', () => {
+  // ....
+
+  test('user can log in', async ({ page }) => {
+    await page.getByRole('button', { name: 'login' }).click()
+    await page.getByLabel('username').fill('mluukkai')
+    await page.getByLabel('password').fill('salainen')
+    await page.getByRole('button', { name: 'login' }).click()
+    await expect(page.getByText('Matti Luukkainen logged in')).toBeVisible()
+  })
+
+  describe('when logged in', () => {
+    beforeEach(async ({ page }) => {
+      await page.getByRole('button', { name: 'login' }).click()
+      await page.getByLabel('username').fill('mluukkai')
+      await page.getByLabel('password').fill('salainen')
+      await page.getByRole('button', { name: 'login' }).click()
+    })
+
+    test('a new note can be created', async ({ page }) => {
+      await page.getByRole('button', { name: 'new note' }).click()
+      await page.getByRole('textbox').fill('a note created by playwright')
+      await page.getByRole('button', { name: 'save' }).click()
+      await expect(page.getByText('a note created by playwright')).toBeVisible()
+    })
+  })
+})
+```
+#### Database management
+- Ideally we have endpoints for testing
+- Make a testing router
+```js
+const router = require('express').Router()
+const Note = require('../models/note')
+const User = require('../models/user')
+
+router.post('/reset', async (request, response) => {
+  await Note.deleteMany({})
+  await User.deleteMany({})
+
+  response.status(204).end()
+})
+
+module.exports = router
+```
+- Use testing router if in dev mode
+- Reset and add new user in before each
+```js
+//..
+beforeEach(async ({ page, request }) => {
+  await request.post('http://localhost:3001/api/testing/reset')
+  await request.post('http://localhost:3001/api/users', {
+    data: {
+      name: 'Matti Luukkainen',
+      username: 'mluukkai',
+      password: 'salainen'
+    }
+  })
+}
+  //...
+```
+#### Failed login test
+```js
+test('login fails with wrong password', async ({ page }) =>{
+  await page.getByRole('button', { name: 'login' }).click()
+  await page.getByLabel('username').fill('mluukkai')
+  await page.getByLabel('password').fill('wrong')
+  await page.getByRole('button', { name: 'login' }).click()
+
+  const errorDiv = page.locator('.error')
+  await expect(errorDiv).toContainText('wrong credentials')
+  await expect(errorDiv).toHaveCSS('border-style', 'solid')
+  await expect(errorDiv).toHaveCSS('color', 'rgb(255, 0, 0)')
+
+  await expect(page.getByText('Matti Luukkainen logged in')).not.toBeVisible()})
+  ```
+#### Only
+- Can append any `test(...)` with `test.only(...)`
+  - Only runs those tests
+
+#### Helpers
+- Use helpers for login and note creation
+- Can also simplify urls:
+  - Proxy lets us adress to frontend port to reach backeng
+  - Playwright config lets us define baseurl
+```js
+export default defineConfig({
+  // ...
+  use: {
+    baseURL: 'http://localhost:5173',
+    // ...
+  },
+  // ...
+})
+```
+#### Debug
+- If something dont work, use debugger:
+`npm test -- -g'one of those can be made nonimportant' --debug`
+
