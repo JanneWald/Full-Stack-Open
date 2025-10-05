@@ -58,7 +58,7 @@ describe('Blog app', () => {
     await expect(lastSummary).toContainText('testAuthor')
   })
 
-  test.only('A blog can be liked', async ({ page }) => {
+  test('A blog can be liked', async ({ page }) => {
     await loginWith(page, 'root', '123456')
 
     await addBlog(page, 'testTitle', 'testAuthor', 'testUrl')
@@ -69,5 +69,16 @@ describe('Blog app', () => {
     // Get the last one and assert it contains our values
     const details = page.locator('.blog-details')
     await expect(details).toContainText('Likes: 1')
+  })
+
+  test.only('A blog can be deleted by the same user', async ({ page }) => {
+    await loginWith(page, 'root', '123456')
+
+    await addBlog(page, 'testTitle', 'testAuthor', 'testUrl')
+    await page.getByRole('button', { name: 'Show Details' }).click()
+    page.on('dialog', dialog => dialog.accept())
+    await page.getByRole('button', { name: 'Delete' }).click()
+
+    await expect(page.getByText('Removed testTitle')).toBeVisible()
   })
 })
