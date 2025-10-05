@@ -16,7 +16,6 @@ const addBlog = async (page, title, author, url) => {
 
 describe('Blog app', () => {
   beforeEach(async ({ page, request }) => {
-    await page.goto('/')
     await request.post('/api/testing/reset')
     await request.post('/api/users', {
       data: {
@@ -33,6 +32,8 @@ describe('Blog app', () => {
         password: '123456'
       }
     })
+
+    await page.goto('/')
   })
 
   test('Login form is shown', async ({ page }) => {
@@ -97,23 +98,30 @@ describe('Blog app', () => {
 
     await loginWith(page, 'rando', '123456')
     await page.getByRole('button', { name: 'Show Details' }).click()
-    await expect(page.getByRole('button', { name: 'Delete' })).not.toBeVisible()
+    await expect(page.getByRole('button', { name: 'Delete' })).toHaveCount(0)  
   })
 
-  test.only('blogs are arranged by likes in descending order', async ({ page }) => {
+  test('blogs are arranged by likes in descending order', async ({ page }) => {
+    // Log in as a user
     await loginWith(page, 'root', '123456')
 
+    // Add two blogs
     await addBlog(page, 'First Blog', 'Author1', 'url1')
     await addBlog(page, 'Second Blog', 'Author2', 'url2')
 
+    // Expand both blogs to show like buttons
     await page.getByRole('button', { name: 'Show Details' }).first().click()
     await page.getByRole('button', { name: 'Show Details' }).last().click()
 
-    const secondBlog = await page.locator('.blog-details').last()
+    // Like the SECOND blog once
+    const blogs = await page.locator('.blog-details').all()
+    const secondBlog = blogs[1]
     await secondBlog.getByRole('button', { name: 'Like' }).click()
 
+    // Wait a moment for re-render
     await page.waitForTimeout(500)
 
+    // Re-select blogs after update
     const updatedBlogs = await page.locator('.blog-summary, .blog-details').all()
     const firstBlogText = await updatedBlogs[0].textContent()
     const secondBlogText = await updatedBlogs[1].textContent()
@@ -122,5 +130,6 @@ describe('Blog app', () => {
     expect(firstBlogText).toContain('Second Blog')
     expect(secondBlogText).toContain('First Blog')
   })
+
 
 })
