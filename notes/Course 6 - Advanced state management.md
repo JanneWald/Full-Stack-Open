@@ -169,3 +169,169 @@ const noteReducer = (state = [], action) => {
   }
 }
 ```
+#### Action creators
+- React components don't need to know the Redux action types and forms. 
+```js
+const createNote = (content) => {
+  return {
+    type: 'NEW_NOTE',
+    payload: {
+      content,
+      important: false,
+      id: generateId()
+    }
+  }
+}
+
+const toggleImportanceOf = (id) => {
+  return {
+    type: 'TOGGLE_IMPORTANCE',
+    payload: { id }
+  }
+}
+```
+- funciton that makes an action is called an *action creator*
+```js
+const App = () => {
+  const addNote = (event) => {
+    event.preventDefault()
+    const content = event.target.note.value
+    event.target.note.value = ''
+    store.dispatch(createNote(content))
+  }
+  
+  const toggleImportance = (id) => {
+    store.dispatch(toggleImportanceOf(id))
+  } // ...
+}
+```
+- Makes things simpler
+#### Forwarding Redux store to other components
+- `npm install react-redux`
+- Make `Main.jsx`
+```js
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import { createStore } from 'redux'
+import { Provider } from 'react-redux'
+import App from './App'
+import noteReducer from './reducers/noteReducer'
+
+const store = createStore(noteReducer)
+ReactDOM.createRoot(document.getElementById('root')).render(
+
+  <Provider store={store}>
+    <App />
+  </Provider>
+)
+```
+- App is now child of provider
+- Can now make a `reducer/noteReducer.js` filer
+```js
+const noteReducer = (state = [], action) => {
+  // ...
+}
+
+const generateId = () =>
+  Number((Math.random() * 1000000).toFixed(0))
+
+
+export const createNote = (content) => {
+  return {
+    type: 'NEW_NOTE',
+    payload: {
+      content,
+      important: false,
+      id: generateId()
+    }
+  }
+}
+
+export const toggleImportanceOf = (id) => {
+  return {
+    type: 'TOGGLE_IMPORTANCE',
+    payload: { id }
+  }
+}
+export default noteReducer
+```
+- Finalized app.jsx
+```js
+import { createNote, toggleImportanceOf } from './reducers/noteReducer'
+import { useSelector, useDispatch } from 'react-redux'
+
+const App = () => {
+  const dispatch = useDispatch() // Use dispatch function in main.jxs
+  const notes = useSelector(state => state) // Searches for state in store in main.jsx
+
+  const addNote = (event) => {
+    event.preventDefault()
+    const content = event.target.note.value
+    event.target.note.value = ''
+
+    dispatch(createNote(content))
+  }
+
+  const toggleImportance = (id) => {
+
+    dispatch(toggleImportanceOf(id))
+  }
+
+  return (
+    <div>
+      <form onSubmit={addNote}>
+        <input name="note" /> 
+        <button type="submit">add</button>
+      </form>
+      <ul>
+
+        {notes.map(note =>
+          <li
+            key={note.id} 
+            onClick={() => toggleImportance(note.id)}
+          >
+            {note.content} <strong>{note.important ? 'important' : ''}</strong>
+          </li>
+        )}
+      </ul>
+    </div>
+  )
+}
+
+export default App
+```
+#### Other component examples
+```jsx
+import { useDispatch, useSelector } from 'react-redux'
+import { toggleImportanceOf } from '../reducers/noteReducer'
+
+const Note = ({ note, handleClick }) => {
+  return(
+    <li onClick={handleClick}>
+      {note.content} 
+      <strong> {note.important ? 'important' : ''}</strong>
+    </li>
+  )
+}
+
+const Notes = () => {
+  const dispatch = useDispatch()
+  const notes = useSelector(state => state)
+
+  return(
+    <ul>
+      {notes.map(note =>
+        <Note
+          key={note.id}
+          note={note}
+          handleClick={() => 
+            dispatch(toggleImportanceOf(note.id))
+          }
+        />
+      )}
+    </ul>
+  )
+}
+
+export default Notes
+```
