@@ -33,6 +33,11 @@ const reducer = (state = initialState, action) => {
           return anecdote
       })
     }
+
+    case 'CREATE': {
+      return [...state, asObject(action.payload)]
+    }
+
     default:
       return state
   }
