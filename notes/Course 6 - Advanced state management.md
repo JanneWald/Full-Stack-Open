@@ -381,3 +381,72 @@ store.dispatch(createNote('combineReducers forms one reducer from many simple re
 `const notes = useSelector(state => state)`
 - Change to:
 `const notes = useSelector(state => state.notes)`
+#### Redux Toolkit
+- Action creator stuff is alot of boilerplate
+- Use redux toolkit
+`npm install @reduxjs/toolkit`
+- In `main.jsx`
+```js
+import { Provider } from 'react-redux'
+import { configureStore } from '@reduxjs/toolkit'import App from './App'
+
+import noteReducer from './reducers/noteReducer'
+import filterReducer from './reducers/filterReducer'
+
+const store = configureStore({ 
+  reducer: {    
+    notes: noteReducer,    
+    filter: filterReducer  
+  }
+})
+```
+- Inside a reducer
+```js
+import { createSlice } from '@reduxjs/toolkit'
+
+const initialState = []
+const generateId = () => {}
+
+const noteSlice = createSlice({  
+  name: 'notes',  
+  initialState,  
+  reducers: {    
+    createNote(state, action) {
+      const content = action.payload      
+      state.push({        
+        content,        
+        important: false,        
+        id: generateId(),      
+      })
+    },
+    toggleImportanceOf(state, action) {      
+      const id = action.payload      
+      const noteToChange = state.find(n => n.id === id)      
+      const changedNote = {         
+        ...noteToChange,         
+        important: !noteToChange.important       
+      }      
+      return state.map(note => note.id !== id ? note : changedNote)         
+    }  
+  },
+})
+export const {createNote,toggleImportanceOf} = noteSlice.actions
+export default noteSlice.reducer
+```
+- `createSlice` name vale determines prefix
+  - createNote reducer has action `note/createNode`
+- This transforms 
+  - `dispatch({ type: 'notes/createNote', payload: 'Redux Toolkit is awesome!' })`
+  - to
+  - `dispatch(createNote('Redux Toolkit is awesome!'))`
+- Redux toolkit also lets us mutate the state again
+- Can import the reducer and action creators like so:
+  - `import noteReducer, { createNote, toggleImportanceOf } from './reducers/noteReducer'`
+
+#### Redux Toolkit and console.log
+- `console.log(state)` wont work properly
+`import { createSlice, current } from '@reduxjs/toolkit'`
+- `console.log(current(state))` wont work properly
+
+#### Redux DevTools
+- Chrome tool to view reducer
