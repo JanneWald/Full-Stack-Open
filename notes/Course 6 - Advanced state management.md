@@ -336,4 +336,48 @@ const Notes = () => {
 
 export default Notes
 ```
+## Store with complex state
+- Say we store notes and filter in same store
+```js
+{
+  notes: [
+    { content: 'reducer defines how redux store works', important: true, id: 1},
+    { content: 'state of store can contain any data', important: false, id: 2}
+  ],
+  filter: 'IMPORTANT'
+}
+```
+- Kind of tricky to manage we should combine instead
+#### Combined Reducers
+- Make seperate store
+```js
+const filterReducer = (state = 'ALL', action) => {
+  switch (action.type) {
+    case 'SET_FILTER':
+      return action.payload
+    default:
+      return state
+  }
+}
+```
+- In `main.jsx` combined reducers
+```js
+import { createStore, combineReducers } from 'redux'
+import { Provider } from 'react-redux' 
 
+import noteReducer from './reducers/noteReducer'
+import filterReducer from './reducers/filterReducer'
+const reducer = combineReducers({  notes: noteReducer,  filter: filterReducer})
+const store = createStore(reducer)
+```
+- Can use the same as before:
+```js
+store.subscribe(() => console.log(store.getState()))
+store.dispatch(filterChange('IMPORTANT'))
+store.dispatch(createNote('combineReducers forms one reducer from many simple reducers'))
+```
+- EVERY REDUCER LISTENS TO THE SAME STORE ACTIONS AT THE SAME TIME
+- Previous function now returns whole store
+`const notes = useSelector(state => state)`
+- Change to:
+`const notes = useSelector(state => state.notes)`
