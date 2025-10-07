@@ -300,6 +300,7 @@ const App = () => {
 
 export default App
 ```
+
 #### Other component examples
 ```jsx
 import { useDispatch, useSelector } from 'react-redux'
@@ -335,3 +336,4 @@ const Notes = () => {
 
 export default Notes
 ```
+
