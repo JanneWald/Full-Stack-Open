@@ -450,3 +450,19 @@ export default noteSlice.reducer
 
 #### Redux DevTools
 - Chrome tool to view reducer
+
+## Communicating with server in Redux app
+
+- Dont append individually, add them all at once at start
+
+```js
+const dispatch = useDispatch()  
+useEffect(() => { noteService.getAll().then( notes => dispatch(setNotes(notes))) }, [])
+```
+- Or for adding to backend:
+```js
+const addNote = async (event) => {    event.preventDefault()
+  const content = event.target.note.value
+  event.target.note.value = ''
+  const newNote = await noteService.createNew(content)    dispatch(createNote(newNote))  }
+```
