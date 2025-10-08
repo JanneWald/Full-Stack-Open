@@ -15,7 +15,14 @@ const createNew = async (content) => {
   return response.data
 }
 
+const voteFor = async (id, currVotes) => {
+  console.log('ye we in the service, adding +1 to ', currVotes)
+  const response = await axios.patch(`${baseUrl}/${id}`, { votes: currVotes + 1 })
+  return response.data
+}
+
 export default {
   getAll,
   createNew,
+  voteFor
 }

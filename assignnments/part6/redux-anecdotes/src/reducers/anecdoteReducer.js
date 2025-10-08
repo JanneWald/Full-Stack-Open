@@ -41,3 +41,10 @@ export const createAnecdote = (anecdoteString) => {
     dispatch(addAnecdote(anecdote))
   }
 }
+
+export const voteForAnecdote = (id, currVotes) => {
+  return async dispatch => {
+    await anecdoteService.voteFor(id, currVotes)
+    dispatch(voteAnecdote(id))
+  }
+}
