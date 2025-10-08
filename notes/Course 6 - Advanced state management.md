@@ -484,3 +484,111 @@ export const initializeNotes = () => {
 ```js
 useEffect(() => { dispatch(initializeNotes()) }, []) 
 ```
+## React Query, useReducer and the context
+- Explore `React Query` to add and manage data in server
+`npm install @tanstack/react-query`
+```js
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import App from './App'
+
+const queryClient = new QueryClient()
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <QueryClientProvider client={queryClient}>
+    <App />
+  </QueryClientProvider>
+)
+```
+- Get notes example:
+```jsx
+import { useQuery } from '@tanstack/react-query'
+import axios from 'axios'
+
+const App = () => {
+  // ...
+  const result = useQuery({ // Response is status
+    queryKey: ['notes'], // String key
+    queryFn: () => axios.get('http://localhost:3001/notes').then(res => res.data) // Still uses axios
+  })
+  console.log(JSON.parse(JSON.stringify(result)))
+
+  if ( result.isLoading ) {
+    return <div>loading data...</div>
+  }
+
+  const notes = result.data
+  return (
+    // ...
+  )
+}
+```
+*"However, the HTTP request is completed so quickly that not even Max Verstappen would be able to see the text."* - FullStackOpen
+- Put query function in its own service or requests file
+#### Synchronizing data to the server using React Query
+`export const createNote = newNote =>  axios.post(baseUrl, newNote).then(res => res.data)`
+```jsx
+import { useQuery, useMutation } from '@tanstack/react-query'
+import { getNotes, createNote } from './requests'
+const App = () => {
+  const newNoteMutation = useMutation({ mutationFn: createNote })
+  const addNote = async (event) => {
+    event.preventDefault()
+    const content = event.target.note.value
+    event.target.note.value = ''
+    newNoteMutation.mutate({ content, important: true })  }
+}
+```
+- Saved on server but not updated
+- Tell Query old data is invalid
+```jsx
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { getNotes, createNote } from './requests'
+const App = () => {
+  const queryClient = useQueryClient()
+
+  const newNoteMutation = useMutation({
+    mutationFn: createNote, 
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notes'] }) // Tells Query to fetch notes
+    },
+  })
+  // ...
+}
+```
+- Updating a note:
+```js
+export const updateNote = updatedNote => 
+  axios.put(`${baseUrl}/${updatedNote.id}`, updatedNote).then(res => res.data)
+```
+```jsx
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query' 
+import { getNotes, createNote, updateNote } from './requests'
+
+const App = () => {
+  // ...
+  const updateNoteMutation = useMutation({
+    mutationFn: updateNote,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notes'] })
+    },
+  })
+  const toggleImportance = (note) => {
+    updateNoteMutation.mutate({...note, important: !note.important })
+  } // ...
+}
+```
+#### Optimizing
+- After any put its going to force a get
+  - Sucks if large db
+- Manually update query state!
+```js
+const newNoteMutation = useMutation({
+  mutationFn: createNote,
+  onSuccess: (newNote) => {
+    const notes = queryClient.getQueryData(['notes'])      
+    queryClient.setQueryData(['notes'], notes.concat(newNote))
+  }
+})
+  // ...
+```
