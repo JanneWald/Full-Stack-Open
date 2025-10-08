@@ -16,7 +16,7 @@ const createNew = async (content) => {
 }
 
 const voteFor = async (id, currVotes) => {
-  console.log('ye we in the service, adding +1 to ', currVotes)
+  // console.log('ye we in the service, adding +1 to ', currVotes)
   const response = await axios.patch(`${baseUrl}/${id}`, { votes: currVotes + 1 })
   return response.data
 }
