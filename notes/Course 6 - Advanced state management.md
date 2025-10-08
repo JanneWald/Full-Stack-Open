@@ -466,3 +466,21 @@ const addNote = async (event) => {    event.preventDefault()
   event.target.note.value = ''
   const newNote = await noteService.createNew(content)    dispatch(createNote(newNote))  }
 ```
+
+
+#### Asynchronous actions and Redux Thunk
+- Ideally server communication is abstracted away form server components
+- Can do this with `Redux Thunk`
+- Inside `noteReducer.js`
+```js
+export const initializeNotes = () => {  
+  return async dispatch => {    
+    const notes = await noteService.getAll()    
+    dispatch(setNotes(notes))  
+  }
+}
+```
+- App component can now use
+```js
+useEffect(() => { dispatch(initializeNotes()) }, []) 
+```
