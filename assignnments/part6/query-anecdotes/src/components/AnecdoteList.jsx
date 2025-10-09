@@ -20,6 +20,10 @@ const AnecdoteList = ({ anecdotes }) => {
       )
       setNotification(`You voted for "${updatedAnecdote.content}"`)
     },
+    onError: (error) => {
+      console.error('Vote failed:', error)
+      setNotification('Failed to vote. Please try again.')
+    }
   })
 
   const handleVote = (anecdote) => {
