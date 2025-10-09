@@ -2,6 +2,7 @@ import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getAnecdotes, createAnecdote } from './requests'
+import { useNotification } from './notification'
 
 const App = () => {
   const result = useQuery({
@@ -10,6 +11,8 @@ const App = () => {
     retry: false
   })
 
+  const { setNotification } = useNotification()
+  
   if (result.isLoading)
     return <>getting anecdotes...</>
 
@@ -20,6 +23,7 @@ const App = () => {
   
   const handleVote = (anecdote) => {
     console.log('vote')
+    setNotification(`Voted for "${anecdote.content}"`)
   }
 
   return (

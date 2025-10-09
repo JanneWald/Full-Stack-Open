@@ -592,3 +592,125 @@ const newNoteMutation = useMutation({
 })
   // ...
 ```
+
+#### useReducer
+- Even with React Query, still need state for things like forms
+```jsx
+import { useReducer } from 'react'
+
+// Reducer
+const counterReducer = (state, action) => {
+  switch (action.type) { // Actions we can setup
+    case "INC":
+        return state + 1
+    case "DEC":
+        return state - 1
+    case "ZERO":
+        return 0
+    default:
+        return state
+  }
+}
+
+const App = () => {
+  // similar to useState()
+  const [counter, counterDispatch] = useReducer(counterReducer, 0)
+
+  return (
+    <div>
+      <div>{counter}</div>
+      <div>
+        <button onClick={() => counterDispatch({ type: "INC"})}>+</button>
+        <button onClick={() => counterDispatch({ type: "DEC"})}>-</button>
+        <button onClick={() => counterDispatch({ type: "ZERO"})}>0</button>
+      </div>
+    </div>
+  )
+}
+
+export default App
+```
+#### Using context for passing the state to components
+- Would have to do default prop drilling for multiple components
+- `Context API` provides solution
+```js
+import { createContext } from 'react'
+
+const CounterContext = createContext()
+
+export default CounterContext
+```
+```jsx
+import CounterContext from './CounterContext'
+
+const App = () => {
+  const [counter, counterDispatch] = useReducer(counterReducer, 0)
+
+  return (
+
+    <CounterContext.Provider value={[counter, counterDispatch]}>
+      <Display />
+      <div>
+        <Button type='INC' label='+' />
+        <Button type='DEC' label='-' />
+        <Button type='ZERO' label='0' />
+      </div>
+
+    </CounterContext.Provider>
+  )
+}
+```
+- Other components use context with `useContext()`
+```jsx
+import { useContext } from 'react'
+import CounterContext from './CounterContext'
+
+const Display = () => {
+
+  const [counter] = useContext(CounterContext)
+  return <div>
+    {counter}
+  </div>
+}
+
+const Button = ({ type, label }) => {
+
+  const [counter, dispatch] = useContext(CounterContext)
+  return (
+    <button onClick={() => dispatch({ type })}>
+      {label}
+    </button>
+  )
+}
+```
+#### Seperate concern into file
+```jsx
+import { createContext, useReducer } from 'react'
+
+const counterReducer = (state, action) => {
+  switch (action.type) {
+    case "INC":
+        return state + 1
+    case "DEC":
+        return state - 1
+    case "ZERO":
+        return 0
+    default:
+        return state
+  }
+}
+
+const CounterContext = createContext()
+
+export const CounterContextProvider = (props) => {
+  const [counter, counterDispatch] = useReducer(counterReducer, 0)
+
+  return (
+    <CounterContext.Provider value={[counter, counterDispatch] }>
+      {props.children}
+    </CounterContext.Provider>
+  )
+}
+
+export default CounterContext
+```
