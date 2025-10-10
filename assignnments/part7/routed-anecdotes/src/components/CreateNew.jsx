@@ -1,14 +1,14 @@
 import { useState } from "react"
 
-const CreateNew = (props) => {
+const CreateNew = ({addNew}) => {
   const [content, setContent] = useState('')
   const [author, setAuthor] = useState('')
   const [info, setInfo] = useState('')
 
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    props.addNew({
+  const handleSubmit = (event) => {
+    event.preventDefault()
+    addNew({
       content,
       author,
       info,
