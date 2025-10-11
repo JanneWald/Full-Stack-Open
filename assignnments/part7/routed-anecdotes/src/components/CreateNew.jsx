@@ -8,11 +8,17 @@ const CreateNew = ({addNew}) => {
   const handleSubmit = (event) => {
     event.preventDefault()
     addNew({
-      content,
-      author,
-      info,
+      content: content.value,
+      author: author.value,
+      info: info.value,
       votes: 0
     })
+  }
+
+  const clearAll = (event) => {
+    event.preventDefault()
+    const fields = [content, author, info]
+    fields.forEach(field => field.clear())
   }
 
   return (
@@ -32,6 +38,7 @@ const CreateNew = ({addNew}) => {
           <input {...info} />
         </div>
         <button>create</button>
+        <button onClick={clearAll}>clear</button>
       </form>
     </div>
   )
