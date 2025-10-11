@@ -134,3 +134,74 @@ const App = () => {
   )
 }  
 ```
+## Custom Hooks
+- React has 15 built in hooks
+- **Don’t call Hooks inside loops, conditions, or nested functions.**
+  - Only use at top level of funciton
+- **You can only call Hooks while React is rendering a function component**
+#### Custom Hook
+- *hooks are regular JavaScript functions that can use any other hooks, as long as they adhere to the rules of hooks*
+  - name of custom hooks must start with the word use
+```js
+const useCounter = () => {
+  const [value, setValue] = useState(0)
+
+  const increase = () => {
+    setValue(value + 1)
+  }
+
+  const decrease = () => {
+    setValue(value - 1)
+  }
+
+  const zero = () => {
+    setValue(0)
+  }
+
+  return { value, increase, decrease, zero }
+}
+
+const counter = useCounter()
+cuonter.increase
+```
+- Common use is for reusing an onChange hook for every field in a form
+```js
+const useField = (type) => {
+  const [value, setValue] = useState('')
+
+  const onChange = (event) => {
+    setValue(event.target.value)
+  }
+
+  return { type, value, onChange }
+}
+```
+```js
+const App = () => {
+  const name = useField('text')
+  // ...
+  return (
+    <div>
+      <form>
+        <input
+          type={name.type}
+          value={name.value}
+          onChange={name.onChange} 
+        /> 
+        // ...
+      </form>
+    </div>
+  )
+}
+```
+#### Spread attributes
+^^^^ about prev example
+- Since name object has the same value name as `<input>` fields
+- We can use spread syntax:
+```js
+<Greeting firstName='Arto' lastName='Hellas' />
+
+const person = { firstName: 'Arto', lastName: 'Hellas' }
+
+<Greeting {...person} />
+``` 
