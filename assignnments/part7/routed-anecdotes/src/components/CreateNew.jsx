@@ -5,6 +5,10 @@ const CreateNew = ({addNew}) => {
   const author = useField('text')
   const info = useField('text')
 
+  const { clear: clearContent, ...contentProps } = content
+  const { clear: clearAuthor, ...authorProps } = author
+  const { clear: clearInfo, ...infoProps } = info
+
   const handleSubmit = (event) => {
     event.preventDefault()
     addNew({
@@ -17,8 +21,8 @@ const CreateNew = ({addNew}) => {
 
   const clearAll = (event) => {
     event.preventDefault()
-    const fields = [content, author, info]
-    fields.forEach(field => field.clear())
+    const clearFunctions = [clearContent, clearAuthor, clearInfo]
+    clearFunctions.forEach(clearFunction => clearFunction())
   }
 
   return (
@@ -27,15 +31,15 @@ const CreateNew = ({addNew}) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input {...content} />
+          <input {...contentProps} />
         </div>
         <div>
           author
-          <input {...author} />
+          <input {...authorProps} />
         </div>
         <div>
           url for more info
-          <input {...info} />
+          <input {...infoProps} />
         </div>
         <button>create</button>
         <button onClick={clearAll}>clear</button>
