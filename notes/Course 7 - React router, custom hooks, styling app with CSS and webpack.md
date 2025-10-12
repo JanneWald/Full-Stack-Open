@@ -205,3 +205,10 @@ const person = { firstName: 'Arto', lastName: 'Hellas' }
 
 <Greeting {...person} />
 ``` 
+## More about styles
+- There are *A LOT* of ready made style libraries
+- This goes over bootstrap
+  - There are react versions of bootstrap
+  - `reactstrap` and `react-bootstrap`
+#### React bootstrap
+`npm install react-bootstrap`
