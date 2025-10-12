@@ -212,3 +212,100 @@ const person = { firstName: 'Arto', lastName: 'Hellas' }
   - `reactstrap` and `react-bootstrap`
 #### React bootstrap
 `npm install react-bootstrap`
+- We have to add style link in head of index.html
+```html
+<head>
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+    crossorigin="anonymous"
+  />
+  // ...
+</head>
+```
+- All contents are typically rendeder in container
+  - Give root div, container elem
+```jsx
+const App = () => {
+  return ( <div className="container">      // ...
+           </div>)}
+```
+##### Tables
+- Lets make list of notes a `Table`
+  - React Bootstrap components have to be imported separately
+```jsx
+import { Table } from 'react-bootstrap'
+const Notes = ({ notes }) => (
+  <div>
+    <h2>Notes</h2>
+
+    <Table striped>
+      <tbody>
+        {notes.map(note =>
+          <tr key={note.id}>
+            <td></td>
+          </tr>
+        )}
+      </tbody>
+    </Table>
+  </div>
+)
+```
+##### Forms
+```jsx
+import { Table, Form, Button } from 'react-bootstrap'
+let Login = (props) => {
+  // ...
+  return (
+    <div>
+      <h2>login</h2>
+      <Form onSubmit={onSubmit}>
+        <Form.Group>
+          <Form.Label>username:</Form.Label>
+          <Form.Control
+            type="text"
+            name="username"
+          />
+        </Form.Group>
+        <--Password element-->
+        <Button variant="primary" type="submit">
+          login
+        </Button>
+      </Form>
+    </div>
+  )
+}
+```
+##### Notification
+```jsx
+<div className="container">
+  {(message &&    <Alert variant="success">      {message}    </Alert>  )}  // ...
+</div>
+```
+#### Navbar
+- Replace the menu router
+```jsx
+<Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+  <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+  <Navbar.Collapse id="responsive-navbar-nav">
+    <Nav className="me-auto">
+      <Nav.Link href="#" as="span">
+        <Link style={padding} to="/">home</Link>
+      </Nav.Link>
+      <Nav.Link href="#" as="span">
+        <Link style={padding} to="/notes">notes</Link>
+      </Nav.Link>
+      <Nav.Link href="#" as="span">
+        <Link style={padding} to="/users">users</Link>
+      </Nav.Link>
+      <Nav.Link href="#" as="span">
+        {user
+          ? <em style={padding}>{user} logged in</em>
+          : <Link style={padding} to="/login">login</Link>
+        }
+      </Nav.Link>
+    </Nav>
+  </Navbar.Collapse>
+</Navbar>
+```
