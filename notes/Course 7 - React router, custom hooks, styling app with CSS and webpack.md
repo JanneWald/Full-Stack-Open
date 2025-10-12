@@ -309,3 +309,84 @@ let Login = (props) => {
   </Navbar.Collapse>
 </Navbar>
 ```
+#### Material UI
+- Lets talk material version
+`npm install @mui/material @emotion/react @emotion/styled`
+- Render whole thing w/ container
+```jsx
+import { Container } from '@mui/material'
+
+const App = () => {
+  // ...
+  return (<Container> // ... </Container> )}
+```
+##### Table
+```jsx
+import {Container,Table,TableBody,TableCell,TableContainer,TableRow,Paper,} from '@mui/material'
+const Notes = ({ notes }) => (
+  <div>
+    <h2>Notes</h2>
+
+    <TableContainer component={Paper}>
+      <Table>
+        <TableBody>
+          {notes.map(note => (
+            <TableRow key={note.id}>
+              <TableCell>//</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  </div>
+)
+```
+##### Form
+```jsx
+const Login = (props) => {
+// ..
+  return (
+    <div>
+      <h2>login</h2>
+      <form onSubmit={onSubmit}>
+        <div>
+          <TextField label="password" type='password' />
+        </div>
+        <div>
+          <Button variant="contained" color="primary" type="submit">
+            login
+          </Button>
+        </div>
+      </form>
+    </div>
+  )
+}
+```
+##### Notification
+```jsx
+<div>
+  {(message &&    <Alert severity="success">      {message}    </Alert>  )}
+</div>
+```
+
+##### Navigation "AppBar"
+```jsx
+<AppBar position="static">
+  <Toolbar>
+    <IconButton edge="start" color="inherit" aria-label="menu">
+    </IconButton>
+    <Button color="inherit">
+      <Link to="/">home</Link>
+    </Button>
+    <Button color="inherit">
+      <Link to="/notes">notes</Link>
+    </Button>
+    <Button color="inherit">
+      {user
+        ? <em>{user} logged in</em>
+        : <Link to="/login">login</Link>
+      }
+    </Button>                
+  </Toolbar>
+</AppBar>
+```
