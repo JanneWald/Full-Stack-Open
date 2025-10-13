@@ -553,3 +553,31 @@ class App extends React.Component {
 #### Virtual DOM
 - React elements are rendered in Virtual DOM using system memory
 - Using ReactDOM library, uses API to render to real DOM
+
+#### On the role of React in applications
+- React is very narrow
+- Focuses heavily on the View in MVC 
+
+#### React/node-application security
+- Check OWASP top 10 for potential flaws
+- Most common is obv SQL injection
+  - Can be stopped with parameterized queries
+- Mongoose sanitizes queries
+- Make sure ur dependencies are up to date
+`npm outdated --depth 0`
+`npm install -g npm-check-updates`
+`$ npm-check-updates`
+
+#### Current Trends
+- Typed versions of JS
+  - TYPESCRIPT BABY!!!!
+- Server-side rendering, isomorphic applications and universal code
+  - Can help performance
+  - More practical with advanves in search engine optimizations
+- Progressive Web App
+- Microservice architecture
+  - We had monolothic
+    - Running on single server, few API endpoints
+  - Microservice
+    - Compose backend into many, independent services
+    
