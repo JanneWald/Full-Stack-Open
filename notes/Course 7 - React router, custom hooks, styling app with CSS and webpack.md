@@ -488,3 +488,68 @@ devServer: {
 - Could optimize lots of stuff, removing unused dependencies, comments, etc
 `"build": "webpack --mode=production",` script
 #### Development and production configuration
+
+## Class components and misc
+- Making components was not possible w/o hooks in the past
+- Had to use JS `Class`
+```js
+class App extends React.Component {
+  constructor(props) {
+    super(props)
+
+    this.state = { // Init state
+      anecdotes: [],
+      current: 0
+    }
+  }
+
+  componentDidMount = () => {
+    axios.get('http://localhost:3001/anecdotes').then(response => {
+      this.setState({ anecdotes: response.data })
+    })
+  }
+
+
+  handleClick = () => { // Event handler
+    const current = Math.floor(
+      Math.random() * this.state.anecdotes.length
+    )
+    this.setState({ current })
+  }
+
+  render() { // What is dispalyed on screen
+    if (this.state.anecdotes.length === 0 ) {
+      return <div>no anecdotes...</div>
+    }
+
+    return (
+      <div>
+        <h1>anecdote of the day</h1>
+        <div>{this.state.anecdotes[this.state.current].content}</div>
+
+        <button onClick={this.handleClick}>next</button>
+      </div>
+    )
+  }
+}
+```
+#### Organization of code in React application
+- No correct way to setup directory
+- Helps to orgainze things like reducers, handlers, components in folders
+
+#### Frontend and backend in the same repository
+- Better to split front and back end
+- If the same
+  - Helps to have `package.json` and `webpack.config` at root
+  - Then have `client/` and `server/`
+
+#### Changes on the server
+- No proj yet reflects liveupdates from server
+- Or when frontend adds time complex operation to backend
+- Execute `polling` on frontend
+  - Use setInterval
+- Or have Websocket, make callback function when server sends notification
+
+#### Virtual DOM
+- React elements are rendered in Virtual DOM using system memory
+- Using ReactDOM library, uses API to render to real DOM
