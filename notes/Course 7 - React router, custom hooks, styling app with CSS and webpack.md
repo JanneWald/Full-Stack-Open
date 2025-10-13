@@ -485,3 +485,6 @@ devServer: {
 `devtool: 'source-map',`
 #### Minifying the code
 - Bundling in our instance would be large, it includes the ENTIRE react library
+- Could optimize lots of stuff, removing unused dependencies, comments, etc
+`"build": "webpack --mode=production",` script
+#### Development and production configuration
