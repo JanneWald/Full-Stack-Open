@@ -390,3 +390,98 @@ const Login = (props) => {
   </Toolbar>
 </AppBar>
 ```
+## Webpack
+- React was hard to setup, React-App was made, then Vite
+#### Bundling js
+- Assuming we have dir:
+```
+├── build
+├── package.json
+├── src
+│   └── index.js
+└── webpack.config.js
+```
+- package.json:
+```json
+{
+  "name": "webpack-part7",
+  "version": "0.0.1",
+  "description": "practicing webpack",
+  "scripts": {},
+  "license": "MIT"
+}
+```
+- Define funcitonality in webpack.config.js:
+```js
+const path = require('path')
+
+const config = () => {
+  return {
+    entry: './src/index.js',
+    output: {
+      path: path.resolve(__dirname, 'build'),
+      filename: 'main.js'
+    }
+  }
+}
+
+module.exports = config
+```
+- And add bulid script :`  "build": "webpack --mode=development"`
+#### Bundling React
+- Assuming we had basic react app
+```jsx
+const App = () => {
+  // ..
+  return (
+    // ..
+  )
+}
+```
+- We need a loader to pack it
+  -  Add loader to webpack config:
+```json
+    module: {      
+      rules: [        
+        {          
+          test: /\.js$/,          
+          loader: 'babel-loader',          
+          options: {presets: ['@babel/preset-react'],},
+        },
+      ],
+    },
+```
+- Install and save loader as dependency
+`npm install @babel/core babel-loader @babel/preset-react --save-dev`
+#### Transpiler
+- Code -> Js is called transpiling
+- '@babel/preset-env' Adding this preset lets us use ES6 & ES7 features
+#### CSS
+- Same issue with react and css, we need a css loader
+`npm install style-loader css-loader --save-dev`
+- Inside `rules`
+```json
+{      
+  test: /\.css$/,      
+  use: ['style-loader', 'css-loader'],
+},
+```
+#### Webpack-dev-server
+- Currently we have to repack and refresh browser
+`npm install --save-dev webpack-dev-server`
+`"start": "webpack serve --mode=development"`
+- Add new config object in webpack.config
+```json
+devServer: {    
+  static: path.resolve(__dirname, 'build'),    
+  compress: true,    
+  port: 3000,  
+},
+```
+#### Source Maps
+- If we have errors it is hard to find out where they come from
+- Need to use a source map to source causes
+- Add devtool property:
+`devtool: 'source-map',`
+#### Minifying the code
+- Bundling in our instance would be large, it includes the ENTIRE react library
