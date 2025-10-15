@@ -1,23 +1,24 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
+
 import Togglable from './components/Toggelable';
-import blogService from './services/blogs';
-import loginService from './services/login';
 import BlogForm from './components/BlogForm';
 import Notification from './components/Notification';
 import LoginForm from './components/LoginForm';
-import { useDispatch } from 'react-redux';
-import { createNotification } from './reducers/notificationReducer';
-import { initializeBlogs, createBlog } from './reducers/blogReducer';
 import BlogList from './components/BlogList';
-import { useSelector } from 'react-redux';
+
 import { updateUser, clearUser } from './reducers/userReducer';
+import { initializeBlogs, createBlog } from './reducers/blogReducer';
+import blogService from './services/blogs';
+
+import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 const App = () => {
   const user = useSelector((store) => store.user);
   const BlogFormRef = useRef();
   const dispatch = useDispatch();
 
-  console.log('User:', user);
+  console.log('Application user:', user);
 
   useEffect(() => {
     dispatch(initializeBlogs());

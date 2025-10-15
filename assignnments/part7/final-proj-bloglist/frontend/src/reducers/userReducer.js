@@ -9,11 +9,9 @@ const userSlice = createSlice({
   reducers: {
     setUser(state, action) {
       const newUser = action.payload;
-      console.log('setting the new user', newUser);
       return newUser;
     },
     clearUser(state, action) {
-      console.log('removing current user');
       return null;
     },
   },
@@ -24,7 +22,6 @@ export default userSlice.reducer;
 
 export const updateUser = (user) => {
   return async (dispatch) => {
-    console.log('updateUser reciever', user);
     dispatch(setUser(user));
     dispatch(createNotification('Logged in as', user.name));
   };

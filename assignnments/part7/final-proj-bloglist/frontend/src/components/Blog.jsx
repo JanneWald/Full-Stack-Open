@@ -8,9 +8,8 @@ const Blog = ({ blog }) => {
   const { title, author, url, likes } = blog;
   const appUser = useSelector((store) => store.user);
 
-  console.log(blog);
-  let userOfBlog = blog.user;
-  if (!userOfBlog) userOfBlog = { username: 'unknown' };
+  let blogUser = blog.user;
+  if (!blogUser) blogUser = { username: 'unknown' };
   const dispatch = useDispatch();
 
   const blogStyle = {
@@ -40,8 +39,8 @@ const Blog = ({ blog }) => {
           Likes: {likes}{' '}
           <button onClick={() => dispatch(likeBlogByBlog(blog))}> Like</button>
         </p>
-        <p>Added by: {userOfBlog.username}</p>
-        {userOfBlog.username === appUser.username && (
+        <p>Added by: {blogUser.username}</p>
+        {blogUser.username === appUser.username && (
           <button onClick={() => dispatch(removeBlog(blog))}>Delete</button>
         )}
       </div>

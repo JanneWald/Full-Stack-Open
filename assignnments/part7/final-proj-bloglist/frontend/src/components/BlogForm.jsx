@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useField } from '../hooks/index';
 
 const BlogForm = ({ submitBlog }) => {

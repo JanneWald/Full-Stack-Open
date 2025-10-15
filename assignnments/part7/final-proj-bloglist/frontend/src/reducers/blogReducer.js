@@ -25,7 +25,6 @@ const blogSlice = createSlice({
     },
     deleteBlog(state, action) {
       const id = action.payload;
-      console.log('deleting', id);
       return state.filter((blog) => blog.id !== id);
     },
   },
@@ -57,7 +56,6 @@ export const createBlog = (blog) => {
 export const likeBlogByBlog = (oldBlog) => {
   return async (dispatch) => {
     try {
-      console.log('going to update', oldBlog);
       const updatedBlog = { ...oldBlog, likes: oldBlog.likes + 1 };
       await blogService.replaceBlog(updatedBlog);
       dispatch(likeBlog(oldBlog.id));
@@ -72,7 +70,6 @@ export const likeBlogByBlog = (oldBlog) => {
 export const removeBlog = (oldBlog) => {
   return async (dispatch) => {
     try {
-      console.log('going to delete', oldBlog.id);
       await blogService.deleteBlog(oldBlog);
       dispatch(deleteBlog(oldBlog.id));
       dispatch(createNotification('Removed Blog'));
