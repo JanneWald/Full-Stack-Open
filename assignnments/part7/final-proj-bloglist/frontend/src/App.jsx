@@ -8,6 +8,8 @@ import Notification from './components/Notification';
 import LoginForm from './components/LoginForm';
 import { useDispatch } from 'react-redux';
 import { createNotification } from './reducers/notificationReducer';
+import { initializeBlogs, createBlog } from './reducers/blogReducer';
+import BlogList from './components/BlogList';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -18,9 +20,7 @@ const App = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    blogService
-      .getAll()
-      .then((fetchedBlogs) => setBlogs(sortBlogs(fetchedBlogs)));
+    dispatch(initializeBlogs());
   }, []);
 
   useEffect(() => {
@@ -52,20 +52,10 @@ const App = () => {
     }
   };
 
-  const addBlog = async (event, blogObject) => {
+  const submitBlog = async (event, blogObject) => {
     event.preventDefault();
-    console.log('Wanted to add a blog');
-    try {
-      const response = await blogService.addBlog(blogObject);
-      setBlogs(blogs.concat(response));
-      dispatch(
-        createNotification(`Added ${blogObject.title} by ${blogObject.author}`)
-      );
-      BlogFormRef.current.toggleVisibility();
-    } catch (exception) {
-      console.error(exception);
-      dispatch(createNotification('Could not submit'));
-    }
+    dispatch(createBlog(blogObject));
+    BlogFormRef.current.toggleVisibility();
   };
 
   const removeBlog = async (event, blogObject) => {
@@ -131,20 +121,16 @@ const App = () => {
 
       <Togglable buttonLabel={'Add blog'} ref={BlogFormRef}>
         <h2>Add Blog</h2>
-        <BlogForm submitBlog={addBlog} />
+        <BlogForm submitBlog={submitBlog} />
       </Togglable>
 
       <h2>Blogs</h2>
       <p>{username} logged in</p>
-      {blogs.map((blog) => (
-        <Blog
-          key={blog.id}
-          blog={blog}
-          likeBlog={likeBlog}
-          removeBlog={removeBlog}
-          currentUser={username}
-        />
-      ))}
+      <BlogList
+        likeBlog={likeBlog}
+        username={username}
+        removeBlog={removeBlog}
+      />
     </div>
   );
 };
