@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { likeBlogByBlog } from '../reducers/blogReducer';
+import { likeBlogByBlog, removeBlog } from '../reducers/blogReducer';
 import { useDispatch } from 'react-redux';
 
-const Blog = ({ blog, removeBlog, currentUser }) => {
+const Blog = ({ blog, currentUser }) => {
   const [detailedView, setDetailedView] = useState(false);
   const { title, author, url, likes } = blog;
   let user = blog.user;
@@ -38,7 +38,7 @@ const Blog = ({ blog, removeBlog, currentUser }) => {
         </p>
         <p>Added by: {user.username}</p>
         {currentUser === user.username && (
-          <button onClick={(event) => removeBlog(event, blog)}>Delete</button>
+          <button onClick={() => dispatch(removeBlog(blog))}>Delete</button>
         )}
       </div>
     );

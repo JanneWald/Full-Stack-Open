@@ -16,15 +16,22 @@ const blogSlice = createSlice({
     },
     likeBlog(state, action) {
       const id = action.payload;
-      return state.map((blog) => {
-        if (blog.id !== id) return blog;
-        else return { ...blog, likes: blog.likes + 1 };
-      });
+      return state
+        .map((blog) => {
+          if (blog.id !== id) return blog;
+          else return { ...blog, likes: blog.likes + 1 };
+        })
+        .sort((a, b) => b.likes - a.likes);
+    },
+    deleteBlog(state, action) {
+      const id = action.payload;
+      console.log('deleting', id);
+      return state.filter((blog) => blog.id !== id);
     },
   },
 });
 
-export const { addBlog, setBlogs, likeBlog } = blogSlice.actions;
+export const { addBlog, setBlogs, likeBlog, deleteBlog } = blogSlice.actions;
 export default blogSlice.reducer;
 
 export const initializeBlogs = () => {
@@ -56,7 +63,22 @@ export const likeBlogByBlog = (oldBlog) => {
       dispatch(likeBlog(oldBlog.id));
       dispatch(createNotification('Liked Blog'));
     } catch (exception) {
+      console.log(exception);
       dispatch(createNotification('Could not like blog'));
+    }
+  };
+};
+
+export const removeBlog = (oldBlog) => {
+  return async (dispatch) => {
+    try {
+      console.log('going to delete', oldBlog.id);
+      await blogService.deleteBlog(oldBlog);
+      dispatch(deleteBlog(oldBlog.id));
+      dispatch(createNotification('Removed Blog'));
+    } catch (exception) {
+      console.log(exception);
+      dispatch(createNotification('Could not remove blog'));
     }
   };
 };

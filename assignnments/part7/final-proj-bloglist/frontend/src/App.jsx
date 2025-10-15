@@ -26,50 +26,18 @@ const App = () => {
   useEffect(() => {
     const blogUser = window.localStorage.getItem('blogUser');
     if (blogUser) {
-      const user = JSON.parse(blogUser);
-      setUser(user);
-      blogService.setToken(user.token);
+      const storedUser = JSON.parse(blogUser);
+      console.log('stored user', storedUser);
+      setUser(storedUser);
+      blogService.setToken(storedUser.token);
+      setUsername(storedUser.username);
     }
   }, []);
-
-  const likeBlog = async (event, oldBlog) => {
-    event.preventDefault();
-    const updatedBlog = { ...oldBlog, likes: oldBlog.likes + 1 };
-    try {
-      const returnedBlog = await blogService.replaceBlog(updatedBlog);
-      setBlogs(
-        sortBlogs(
-          blogs.map((blog) => {
-            if (blog.id !== oldBlog.id) return blog;
-            else return { ...returnedBlog, user: oldBlog.user };
-          })
-        )
-      );
-      dispatch(createNotification('Liked Blog'));
-    } catch (exception) {
-      console.error(exception);
-      dispatch(createNotification('Could not like Blog'));
-    }
-  };
 
   const submitBlog = async (event, blogObject) => {
     event.preventDefault();
     dispatch(createBlog(blogObject));
     BlogFormRef.current.toggleVisibility();
-  };
-
-  const removeBlog = async (event, blogObject) => {
-    event.preventDefault();
-    try {
-      if (!confirm(`Are you sure you want to remove Blog: ${blogObject.title}`))
-        return;
-      await blogService.deleteBlog(blogObject);
-      setBlogs(blogs.filter((blog) => blog.id !== blogObject.id));
-      dispatch(createNotification(`Removed ${blogObject.title}`));
-    } catch (exception) {
-      console.error(exception);
-      dispatch(createNotification('Could not delete'));
-    }
   };
 
   const handleLogin = async (event) => {
@@ -126,11 +94,7 @@ const App = () => {
 
       <h2>Blogs</h2>
       <p>{username} logged in</p>
-      <BlogList
-        likeBlog={likeBlog}
-        username={username}
-        removeBlog={removeBlog}
-      />
+      <BlogList username={username} />
     </div>
   );
 };
