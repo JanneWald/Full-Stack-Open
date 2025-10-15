@@ -6,15 +6,16 @@ import loginService from './services/login';
 import BlogForm from './components/BlogForm';
 import Notification from './components/Notification';
 import LoginForm from './components/LoginForm';
+import { useDispatch } from 'react-redux';
+import { createNotification } from './reducers/notificationReducer';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null);
   const BlogFormRef = useRef();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     blogService
@@ -44,12 +45,10 @@ const App = () => {
           })
         )
       );
-      setSuccessMessage(`Liked ${oldBlog.title}`);
-      setTimeout(() => setSuccessMessage(null), 5000);
+      dispatch(createNotification('Liked Blog'));
     } catch (exception) {
       console.error(exception);
-      setErrorMessage('Could not like blog');
-      setTimeout(() => setErrorMessage(null), 5000);
+      dispatch(createNotification('Could not like Blog'));
     }
   };
 
@@ -59,13 +58,13 @@ const App = () => {
     try {
       const response = await blogService.addBlog(blogObject);
       setBlogs(blogs.concat(response));
-      setSuccessMessage(`Added ${blogObject.title} by ${blogObject.author}`);
-      setTimeout(() => setSuccessMessage(null), 5000);
+      dispatch(
+        createNotification(`Added ${blogObject.title} by ${blogObject.author}`)
+      );
       BlogFormRef.current.toggleVisibility();
     } catch (exception) {
       console.error(exception);
-      setErrorMessage('Could not submit');
-      setTimeout(() => setErrorMessage(null), 5000);
+      dispatch(createNotification('Could not submit'));
     }
   };
 
@@ -76,12 +75,10 @@ const App = () => {
         return;
       await blogService.deleteBlog(blogObject);
       setBlogs(blogs.filter((blog) => blog.id !== blogObject.id));
-      setSuccessMessage(`Removed ${blogObject.title}`);
-      setTimeout(() => setSuccessMessage(null), 5000);
+      dispatch(createNotification(`Removed ${blogObject.title}`));
     } catch (exception) {
       console.error(exception);
-      setErrorMessage('Could not delete');
-      setTimeout(() => setErrorMessage(null), 5000);
+      dispatch(createNotification('Could not delete'));
     }
   };
 
@@ -96,8 +93,7 @@ const App = () => {
     } catch (exception) {
       console.error(exception);
       setPassword('');
-      setErrorMessage('Wrong credentials');
-      setTimeout(() => setErrorMessage(null), 5000);
+      dispatch(createNotification('Wrong credentials'));
     }
   };
 

@@ -1,41 +1,51 @@
 import { useState } from 'react';
 
 const BlogForm = ({ submitBlog }) => {
-  const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
-  const [url, setUrl] = useState('');
+  const useField = (type) => {
+    const [value, setValue] = useState('');
+
+    const onChange = (event) => {
+      setValue(event.target.value);
+    };
+
+    return {
+      type,
+      value,
+      onChange,
+    };
+  };
+
+  const title = useField('text');
+  const author = useField('text');
+  const url = useField('text');
 
   return (
     <>
-      <form onSubmit={(event) => submitBlog(event, { title, author, url })}>
+      <form
+        onSubmit={(event) =>
+          submitBlog(event, {
+            title: title.value,
+            author: author.value,
+            url: url.value,
+          })
+        }
+      >
         <div>
           <label>
             Title
-            <input
-              type='text'
-              value={title}
-              onChange={({ target }) => setTitle(target.value)}
-            />
+            <input {...title} />
           </label>
         </div>
         <div>
           <label>
             Author
-            <input
-              type='text'
-              value={author}
-              onChange={({ target }) => setAuthor(target.value)}
-            />
+            <input {...author} />
           </label>
         </div>
         <div>
           <label>
             Url
-            <input
-              type='text'
-              value={url}
-              onChange={({ target }) => setUrl(target.value)}
-            />
+            <input {...url} />
           </label>
         </div>
         <button type='submit'> Add</button>
