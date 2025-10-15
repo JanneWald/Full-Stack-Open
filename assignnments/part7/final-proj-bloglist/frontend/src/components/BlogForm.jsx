@@ -1,20 +1,7 @@
 import { useState } from 'react';
+import { useField } from '../hooks/index';
 
 const BlogForm = ({ submitBlog }) => {
-  const useField = (type) => {
-    const [value, setValue] = useState('');
-
-    const onChange = (event) => {
-      setValue(event.target.value);
-    };
-
-    return {
-      type,
-      value,
-      onChange,
-    };
-  };
-
   const title = useField('text');
   const author = useField('text');
   const url = useField('text');
