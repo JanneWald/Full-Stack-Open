@@ -1,10 +1,13 @@
 import { useState } from 'react';
+import { likeBlogByBlog } from '../reducers/blogReducer';
+import { useDispatch } from 'react-redux';
 
-const Blog = ({ blog, likeBlog, removeBlog, currentUser }) => {
+const Blog = ({ blog, removeBlog, currentUser }) => {
   const [detailedView, setDetailedView] = useState(false);
   const { title, author, url, likes } = blog;
   let user = blog.user;
   if (!user) user = { username: 'unknown' };
+  const dispatch = useDispatch();
 
   const blogStyle = {
     paddingTop: 10,
@@ -31,7 +34,7 @@ const Blog = ({ blog, likeBlog, removeBlog, currentUser }) => {
         <p>{url}</p>
         <p>
           Likes: {likes}{' '}
-          <button onClick={(event) => likeBlog(event, blog)}> Like</button>
+          <button onClick={() => dispatch(likeBlogByBlog(blog))}> Like</button>
         </p>
         <p>Added by: {user.username}</p>
         {currentUser === user.username && (
