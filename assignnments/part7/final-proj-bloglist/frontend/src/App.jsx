@@ -17,8 +17,7 @@ import blogService from './services/blogs';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 
-import { useMatch } from 'react-router-dom';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 
 const App = () => {
   const user = useSelector((store) => store.user);
@@ -30,10 +29,6 @@ const App = () => {
   useEffect(() => {
     dispatch(initializeBlogs());
   }, []);
-  const blogs = useSelector((store) => store.blogs);
-  console.log('blogs', blogs);
-  const match = useMatch('blogs/:id');
-  const blog = match ? blogs.find((blog) => blog.id === match.params.id) : null;
 
   useEffect(() => {
     const blogUser = window.localStorage.getItem('blogUser');
@@ -92,7 +87,7 @@ const App = () => {
       </div>
       <Routes>
         <Route path='/' element={<BlogList />} />
-        <Route path='/blogs/:id' element={<Blog blog={blog} />} />
+        <Route path='/blogs/:id' element={<Blog />} />
         <Route path='/users' element={<Users />} />
         <Route path='/users/:id' element={<User />} />
       </Routes>
