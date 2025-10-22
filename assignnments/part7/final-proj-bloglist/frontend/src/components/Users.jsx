@@ -14,17 +14,20 @@ const Users = () => {
     <>
       <h1>Users page</h1>
       <table>
-        <tr>
-          <th>Name</th>
-          <th>Count</th>
-        </tr>
-
-        {users.map((user) => (
+        <thead>
           <tr>
-            <td>{user.name}</td>
-            <td>{user.blogs.length}</td>
+            <th>Name</th>
+            <th>Count</th>
           </tr>
-        ))}
+        </thead>
+        <tbody>
+          {users.map((user) => (
+            <tr>
+              <td>{user.name}</td>
+              <td>{user.blogs.length}</td>
+            </tr>
+          ))}
+        </tbody>
       </table>
     </>
   );
