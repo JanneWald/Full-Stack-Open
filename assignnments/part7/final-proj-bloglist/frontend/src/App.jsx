@@ -7,6 +7,7 @@ import LoginForm from './components/LoginForm';
 import BlogList from './components/BlogList';
 import Home from './components/Home';
 import Users from './components/Users';
+import User from './components/User';
 
 import { updateUser, clearUser } from './reducers/userReducer';
 import { initializeBlogs, createBlog } from './reducers/blogReducer';
@@ -86,6 +87,7 @@ const App = () => {
       <Routes>
         <Route path='/' element={<BlogList />} />
         <Route path='/users' element={<Users />} />
+        <Route path='/users/:id' element={<User />} />
       </Routes>
     </Router>
   );
