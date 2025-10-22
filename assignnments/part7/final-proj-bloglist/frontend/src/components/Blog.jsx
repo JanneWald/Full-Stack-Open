@@ -20,45 +20,30 @@ const Blog = ({ blog }) => {
     marginBottom: 5,
   };
 
-  if (detailedView) {
-    return (
-      <div style={blogStyle} className='blog-details'>
-        <p>
-          <i>{title}</i>{' '}
-          <button
-            onClick={() => {
-              setDetailedView(false);
-            }}
-          >
-            Hide Details
-          </button>
-        </p>
-        <p>By: {author}</p>
-        <p>{url}</p>
-        <p>
-          Likes: {likes}{' '}
-          <button onClick={() => dispatch(likeBlogByBlog(blog))}> Like</button>
-        </p>
-        <p>Added by: {blogUser.username}</p>
-        {blogUser.username === appUser.username && (
-          <button onClick={() => dispatch(removeBlog(blog))}>Delete</button>
-        )}
-      </div>
-    );
-  } else {
-    return (
-      <div style={blogStyle} className='blog-summary'>
-        <i>{title}</i>, {author}{' '}
+  return (
+    <div style={blogStyle} className='blog-details'>
+      <p>
+        <i>{title}</i>{' '}
         <button
           onClick={() => {
-            setDetailedView(true);
+            setDetailedView(false);
           }}
         >
-          Show Details
+          Hide Details
         </button>
-      </div>
-    );
-  }
+      </p>
+      <p>By: {author}</p>
+      <p>{url}</p>
+      <p>
+        Likes: {likes}{' '}
+        <button onClick={() => dispatch(likeBlogByBlog(blog))}> Like</button>
+      </p>
+      <p>Added by: {blogUser.username}</p>
+      {blogUser.username === appUser.username && (
+        <button onClick={() => dispatch(removeBlog(blog))}>Delete</button>
+      )}
+    </div>
+  );
 };
 
 export default Blog;

@@ -4,6 +4,7 @@ import Togglable from './components/Toggelable';
 import BlogForm from './components/BlogForm';
 import Notification from './components/Notification';
 import LoginForm from './components/LoginForm';
+import Blog from './components/Blog';
 import BlogList from './components/BlogList';
 import Home from './components/Home';
 import Users from './components/Users';
@@ -16,6 +17,7 @@ import blogService from './services/blogs';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 
+import { useMatch } from 'react-router-dom';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 
 const App = () => {
@@ -28,6 +30,10 @@ const App = () => {
   useEffect(() => {
     dispatch(initializeBlogs());
   }, []);
+  const blogs = useSelector((store) => store.blogs);
+  console.log('blogs', blogs);
+  const match = useMatch('blogs/:id');
+  const blog = match ? blogs.find((blog) => blog.id === match.params.id) : null;
 
   useEffect(() => {
     const blogUser = window.localStorage.getItem('blogUser');
@@ -76,7 +82,7 @@ const App = () => {
   };
 
   return (
-    <Router>
+    <div>
       <Header />
       <div>
         <Togglable buttonLabel={'Add blog'} ref={BlogFormRef}>
@@ -86,10 +92,11 @@ const App = () => {
       </div>
       <Routes>
         <Route path='/' element={<BlogList />} />
+        <Route path='/blogs/:id' element={<Blog blog={blog} />} />
         <Route path='/users' element={<Users />} />
         <Route path='/users/:id' element={<User />} />
       </Routes>
-    </Router>
+    </div>
   );
 };
 
