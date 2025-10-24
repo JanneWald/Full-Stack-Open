@@ -9,6 +9,7 @@ import BlogList from './components/BlogList';
 import Home from './components/Home';
 import Users from './components/Users';
 import User from './components/User';
+import NavMenu from './components/NavMenu';
 
 import { updateUser, clearUser } from './reducers/userReducer';
 import { initializeBlogs, createBlog } from './reducers/blogReducer';
@@ -61,17 +62,9 @@ const App = () => {
   const Header = () => {
     return (
       <>
-        <Notification />
+        <NavMenu username={user.username} />
         <h1>Blog App</h1>
-        <p>{user.username} logged in</p>
-        <button
-          onClick={() => {
-            dispatch(clearUser());
-            window.localStorage.removeItem('blogUser');
-          }}
-        >
-          Logout{' '}
-        </button>
+        <Notification />
       </>
     );
   };
