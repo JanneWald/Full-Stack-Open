@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom';
 const Blog = () => {
   const { id } = useParams();
   const blog = useSelector((store) => store.blogs.find((b) => b.id === id));
-  const { title, author, url, likes } = blog;
+  const { title, author, url, likes, comments } = blog;
   const appUser = useSelector((store) => store.user);
 
   let blogUser = blog.user;
@@ -20,6 +20,9 @@ const Blog = () => {
     borderWidth: 1,
     marginBottom: 5,
   };
+  if (!blog) {
+    return <>Could not find blog</>;
+  }
 
   return (
     <div style={blogStyle} className='blog-details'>
@@ -36,6 +39,12 @@ const Blog = () => {
       {blogUser.username === appUser.username && (
         <button onClick={() => dispatch(removeBlog(blog))}>Delete</button>
       )}
+      <h4>Comments:</h4>
+      <ul>
+        {comments.map((comment) => (
+          <li>{comment}</li>
+        ))}
+      </ul>
     </div>
   );
 };
