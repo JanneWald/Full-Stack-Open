@@ -2,6 +2,29 @@ import { likeBlogByBlog, removeBlog } from '../reducers/blogReducer';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import { useField } from '../hooks/index';
+import blogService from '../services/blogs';
+
+const CommentForm = ({ id }) => {
+  const comment = useField('text');
+
+  const onSubmit = (event) => {
+    console.log(comment.value);
+    event.preventDefault();
+    blogService.commentOnBlog(id, comment.value);
+  };
+
+  return (
+    <div>
+      <form onSubmit={onSubmit}>
+        <label>
+          <input {...comment} />
+        </label>
+        <button type='submit'> Add comment</button>
+      </form>
+    </div>
+  );
+};
 
 const Blog = () => {
   const { id } = useParams();
@@ -40,6 +63,7 @@ const Blog = () => {
         <button onClick={() => dispatch(removeBlog(blog))}>Delete</button>
       )}
       <h4>Comments:</h4>
+      <CommentForm id={id} />
       <ul>
         {comments.map((comment) => (
           <li>{comment}</li>

@@ -22,7 +22,6 @@ import { Routes, Route } from 'react-router-dom';
 
 const App = () => {
   const user = useSelector((store) => store.user);
-  const BlogFormRef = useRef();
   const dispatch = useDispatch();
 
   console.log('Application user:', user);
@@ -43,12 +42,6 @@ const App = () => {
       }
     }
   }, []);
-
-  const submitBlog = async (event, blogObject) => {
-    event.preventDefault();
-    dispatch(createBlog(blogObject));
-    BlogFormRef.current.toggleVisibility();
-  };
 
   if (!user) {
     return (
@@ -72,12 +65,6 @@ const App = () => {
   return (
     <div>
       <Header />
-      <div>
-        <Togglable buttonLabel={'Add blog'} ref={BlogFormRef}>
-          <h2>Add Blog</h2>
-          <BlogForm submitBlog={submitBlog} />
-        </Togglable>
-      </div>
       <Routes>
         <Route path='/' element={<BlogList />} />
         <Route path='/blogs/:id' element={<Blog />} />
