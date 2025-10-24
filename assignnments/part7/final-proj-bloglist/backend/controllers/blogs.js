@@ -31,6 +31,8 @@ blogsRouter.post('/:id/comments', async (request, response, next) => {
     { $push: { comments: comment } },
     { new: true }
   );
+
+  response.status(201).json(comment);
 });
 
 blogsRouter.post('/', userExtractor, async (request, response, next) => {
