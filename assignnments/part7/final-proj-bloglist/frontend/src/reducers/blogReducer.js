@@ -27,10 +27,20 @@ const blogSlice = createSlice({
       const id = action.payload;
       return state.filter((blog) => blog.id !== id);
     },
+    commentBlog(state, action) {
+      const { id, comment } = action.payload;
+      return state.map((blog) => {
+        if (blog.id !== id) return blog;
+        else {
+          return { ...blog, comments: blog.comments.concat(comment) };
+        }
+      });
+    },
   },
 });
 
-export const { addBlog, setBlogs, likeBlog, deleteBlog } = blogSlice.actions;
+export const { addBlog, setBlogs, likeBlog, deleteBlog, commentBlog } =
+  blogSlice.actions;
 export default blogSlice.reducer;
 
 export const initializeBlogs = () => {
@@ -76,6 +86,19 @@ export const removeBlog = (oldBlog) => {
     } catch (exception) {
       console.log(exception);
       dispatch(createNotification('Could not remove blog'));
+    }
+  };
+};
+
+export const commentOnBlog = (id, comment) => {
+  return async (dispatch) => {
+    try {
+      await blogService.commentOnBlog(id, comment);
+      dispatch(commentBlog({ id, comment }));
+      dispatch(createNotification('Commented on blog'));
+    } catch (exception) {
+      console.log(exception);
+      dispatch(createNotification('Could comment on blog'));
     }
   };
 };

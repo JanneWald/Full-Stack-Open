@@ -1,17 +1,21 @@
-import { likeBlogByBlog, removeBlog } from '../reducers/blogReducer';
+import {
+  likeBlogByBlog,
+  removeBlog,
+  commentOnBlog,
+} from '../reducers/blogReducer';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { useField } from '../hooks/index';
-import blogService from '../services/blogs';
 
 const CommentForm = ({ id }) => {
+  const dispatch = useDispatch();
   const comment = useField('text');
 
   const onSubmit = (event) => {
     console.log(comment.value);
     event.preventDefault();
-    blogService.commentOnBlog(id, comment.value);
+    dispatch(commentOnBlog(id, comment.value));
   };
 
   return (
@@ -27,14 +31,18 @@ const CommentForm = ({ id }) => {
 };
 
 const Blog = () => {
+  const dispatch = useDispatch();
   const { id } = useParams();
   const blog = useSelector((store) => store.blogs.find((b) => b.id === id));
-  const { title, author, url, likes, comments } = blog;
   const appUser = useSelector((store) => store.user);
 
+  if (!blog) {
+    return <>Finding Blog...</>;
+  }
+
+  const { title, author, url, likes, comments } = blog;
   let blogUser = blog.user;
   if (!blogUser) blogUser = { username: 'unknown' };
-  const dispatch = useDispatch();
 
   const blogStyle = {
     paddingTop: 10,
@@ -43,9 +51,6 @@ const Blog = () => {
     borderWidth: 1,
     marginBottom: 5,
   };
-  if (!blog) {
-    return <>Could not find blog</>;
-  }
 
   return (
     <div style={blogStyle} className='blog-details'>
