@@ -4,6 +4,7 @@ import blogService from '../services/blogs';
 import { updateUser } from '../reducers/userReducer';
 import { createNotification } from '../reducers/notificationReducer';
 import { useDispatch } from 'react-redux';
+import { Table, Form, Button } from 'react-bootstrap';
 
 const LoginForm = () => {
   const username = useField('text');
@@ -29,21 +30,19 @@ const LoginForm = () => {
   return (
     <div>
       <h1>Login</h1>
-      <form onSubmit={handleLogin}>
-        <div>
-          <label>
-            Username
-            <input {...username} />
-          </label>
-        </div>
-        <div>
-          <label>
-            Password
-            <input {...password} />
-          </label>
-        </div>
-        <button type='submit'>Login</button>
-      </form>
+      <Form onSubmit={handleLogin}>
+        <Form.Group>
+          <Form.Label>Username</Form.Label>
+          <Form.Control {...username} name='username' />
+        </Form.Group>
+        <Form.Group>
+          <Form.Label>Password</Form.Label>
+          <Form.Control {...password} name='username' />
+        </Form.Group>
+        <Button variant='primary' type='submit'>
+          Login
+        </Button>
+      </Form>
     </div>
   );
 };

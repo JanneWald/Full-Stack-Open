@@ -1,4 +1,5 @@
 import { useField } from '../hooks/index';
+import { Table, Form, Button } from 'react-bootstrap';
 
 const BlogForm = ({ submitBlog }) => {
   const title = useField('text');
@@ -6,8 +7,8 @@ const BlogForm = ({ submitBlog }) => {
   const url = useField('text');
 
   return (
-    <>
-      <form
+    <div>
+      <Form
         onSubmit={(event) =>
           submitBlog(event, {
             title: title.value,
@@ -16,27 +17,23 @@ const BlogForm = ({ submitBlog }) => {
           })
         }
       >
-        <div>
-          <label>
-            Title
-            <input {...title} />
-          </label>
-        </div>
-        <div>
-          <label>
-            Author
-            <input {...author} />
-          </label>
-        </div>
-        <div>
-          <label>
-            Url
-            <input {...url} />
-          </label>
-        </div>
-        <button type='submit'> Add</button>
-      </form>
-    </>
+        <Form.Group>
+          <Form.Label>Title: </Form.Label>
+          <Form.Control {...title} name='title' />
+        </Form.Group>
+        <Form.Group>
+          <Form.Label>Author: </Form.Label>
+          <Form.Control {...author} name='author' />
+        </Form.Group>
+        <Form.Group>
+          <Form.Label>URL: </Form.Label>
+          <Form.Control {...url} name='url' />
+        </Form.Group>
+        <Button variant='primary' type='submit'>
+          Add
+        </Button>
+      </Form>
+    </div>
   );
 };
 
