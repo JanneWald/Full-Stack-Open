@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { useField } from '../hooks/index';
+import { Form, Button } from 'react-bootstrap';
 
 const CommentForm = ({ id }) => {
   const dispatch = useDispatch();
@@ -20,12 +21,14 @@ const CommentForm = ({ id }) => {
 
   return (
     <div>
-      <form onSubmit={onSubmit}>
-        <label>
-          <input {...comment} />
-        </label>
-        <button type='submit'> Add comment</button>
-      </form>
+      <Form onSubmit={onSubmit}>
+        <Form.Group>
+          <Form.Label>
+            <Form.Control {...comment} />
+          </Form.Label>
+          <Button type='submit'> Add comment</Button>
+        </Form.Group>
+      </Form>
     </div>
   );
 };
@@ -61,11 +64,13 @@ const Blog = () => {
       <p>{url}</p>
       <p>
         Likes: {likes}{' '}
-        <button onClick={() => dispatch(likeBlogByBlog(blog))}> Like</button>
+        <Button onClick={() => dispatch(likeBlogByBlog(blog))}> Like</Button>
       </p>
       <p>Added by: {blogUser.username}</p>
       {blogUser.username === appUser.username && (
-        <button onClick={() => dispatch(removeBlog(blog))}>Delete</button>
+        <Button variant='danger' onClick={() => dispatch(removeBlog(blog))}>
+          Delete
+        </Button>
       )}
       <h4>Comments:</h4>
       <CommentForm id={id} />

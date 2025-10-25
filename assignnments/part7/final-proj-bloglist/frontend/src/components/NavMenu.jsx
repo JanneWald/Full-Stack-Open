@@ -1,35 +1,43 @@
 import { useDispatch } from 'react-redux';
 import { clearUser } from '../reducers/userReducer';
 import { Link } from 'react-router-dom';
+import { Nav, Navbar, Button, NavLink } from 'react-bootstrap';
 
 const NavMenu = ({ username }) => {
   const dispatch = useDispatch();
 
-  const style = {
-    border: 'solid',
-    padding: 10,
-    borderWidth: 1,
-  };
+  const padding = { marginLeft: 10, marginRight: 10 };
 
   return (
-    <div style={style}>
-      <Link to={'/'} style={{ marginRight: 10 }}>
-        blogs
-      </Link>
-      <Link to={'/users'} style={{ marginRight: 10 }}>
-        users
-      </Link>
-      {username} logged in
-      <button
-        style={{ marginLeft: 10 }}
-        onClick={() => {
-          dispatch(clearUser());
-          window.localStorage.removeItem('blogUser');
-        }}
-      >
-        Logout{' '}
-      </button>
-    </div>
+    <Navbar collapseOnSelect expand='lg' bg='dark' variant='dark'>
+      <Navbar.Toggle aria-controls='responsive-navbar-nar' />
+      <Navbar.Collapse id='responsive-navbar-nav'>
+        <Nav className='meAuto'>
+          <Nav.Link href='#' as='span'>
+            <Link to={'/'} style={padding}>
+              blogs
+            </Link>
+          </Nav.Link>
+          <Nav.Link href='#' as='span'>
+            <Link to={'/users'} style={padding}>
+              users
+            </Link>
+          </Nav.Link>
+          <Nav.Link href='#' as='span'>
+            <em style={padding}> {username} logged in</em>
+          </Nav.Link>
+          <Button
+            style={{ marginLeft: 10 }}
+            onClick={() => {
+              dispatch(clearUser());
+              window.localStorage.removeItem('blogUser');
+            }}
+          >
+            Logout{' '}
+          </Button>
+        </Nav>
+      </Navbar.Collapse>
+    </Navbar>
   );
 };
 
