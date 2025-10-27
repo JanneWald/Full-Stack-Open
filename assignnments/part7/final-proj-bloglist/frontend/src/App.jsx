@@ -1,18 +1,16 @@
 import { useEffect, useRef } from 'react';
 
-import Togglable from './components/Toggelable';
-import BlogForm from './components/BlogForm';
+import './App.css';
 import Notification from './components/Notification';
 import LoginForm from './components/LoginForm';
 import Blog from './components/Blog';
 import BlogList from './components/BlogList';
-import Home from './components/Home';
 import Users from './components/Users';
 import User from './components/User';
 import NavMenu from './components/NavMenu';
 
 import { updateUser, clearUser } from './reducers/userReducer';
-import { initializeBlogs, createBlog } from './reducers/blogReducer';
+import { initializeBlogs } from './reducers/blogReducer';
 import blogService from './services/blogs';
 
 import { useDispatch } from 'react-redux';
@@ -52,19 +50,9 @@ const App = () => {
     );
   }
 
-  const Header = () => {
-    return (
-      <>
-        <NavMenu username={user.username} />
-        <h1>Blog App</h1>
-        <Notification />
-      </>
-    );
-  };
-
   return (
     <div className='container'>
-      <Header />
+      <NavMenu username={user.username} />
       <Routes>
         <Route path='/' element={<BlogList />} />
         <Route path='/blogs/:id' element={<Blog />} />

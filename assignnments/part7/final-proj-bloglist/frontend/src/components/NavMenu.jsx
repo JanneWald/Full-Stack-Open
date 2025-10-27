@@ -1,42 +1,59 @@
 import { useDispatch } from 'react-redux';
 import { clearUser } from '../reducers/userReducer';
 import { Link } from 'react-router-dom';
-import { Nav, Navbar, Button, NavLink } from 'react-bootstrap';
+import { Nav, Navbar, Button, Container } from 'react-bootstrap';
 
 const NavMenu = ({ username }) => {
   const dispatch = useDispatch();
 
-  const padding = { marginLeft: 10, marginRight: 10 };
+  const handleLogout = () => {
+    dispatch(clearUser());
+    window.localStorage.removeItem('blogUser');
+  };
 
   return (
-    <Navbar collapseOnSelect expand='lg' bg='dark' variant='dark'>
-      <Navbar.Toggle aria-controls='responsive-navbar-nar' />
-      <Navbar.Collapse id='responsive-navbar-nav'>
-        <Nav className='meAuto'>
-          <Nav.Link href='#' as='span'>
-            <Link to={'/'} style={padding}>
-              blogs
-            </Link>
-          </Nav.Link>
-          <Nav.Link href='#' as='span'>
-            <Link to={'/users'} style={padding}>
-              users
-            </Link>
-          </Nav.Link>
-          <Nav.Link href='#' as='span'>
-            <em style={padding}> {username} logged in</em>
-          </Nav.Link>
-          <Button
-            style={{ marginLeft: 10 }}
-            onClick={() => {
-              dispatch(clearUser());
-              window.localStorage.removeItem('blogUser');
-            }}
-          >
-            Logout{' '}
-          </Button>
-        </Nav>
-      </Navbar.Collapse>
+    <Navbar
+      collapseOnSelect
+      expand='lg'
+      bg='light'
+      variant='light'
+      className='mb-4 shadow-sm border-bottom'
+    >
+      <Container>
+        <Navbar.Brand
+          as={Link}
+          to='/'
+          className='fw-bold text-primary'
+          style={{ fontSize: '1.4rem' }}
+        >
+          Blog App
+        </Navbar.Brand>
+
+        <Navbar.Toggle aria-controls='responsive-navbar-nav' />
+        <Navbar.Collapse id='responsive-navbar-nav'>
+          <Nav className='me-auto'>
+            <Nav.Link as={Link} to='/' className='text-primary fw-semibold'>
+              Blogs
+            </Nav.Link>
+            <Nav.Link
+              as={Link}
+              to='/users'
+              className='text-primary fw-semibold'
+            >
+              Users
+            </Nav.Link>
+          </Nav>
+
+          <Nav className='align-items-center'>
+            <Navbar.Text className='me-3 text-secondary'>
+              Signed in as <strong>{username}</strong>
+            </Navbar.Text>
+            <Button variant='outline-primary' size='sm' onClick={handleLogout}>
+              Logout
+            </Button>
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
     </Navbar>
   );
 };

@@ -4,7 +4,7 @@ import blogService from '../services/blogs';
 import { updateUser } from '../reducers/userReducer';
 import { createNotification } from '../reducers/notificationReducer';
 import { useDispatch } from 'react-redux';
-import { Table, Form, Button } from 'react-bootstrap';
+import { Card, Form, Button } from 'react-bootstrap';
 
 const LoginForm = () => {
   const username = useField('text');
@@ -28,21 +28,25 @@ const LoginForm = () => {
   };
 
   return (
-    <div>
-      <h1>Login</h1>
-      <Form onSubmit={handleLogin}>
-        <Form.Group>
-          <Form.Label>Username</Form.Label>
-          <Form.Control {...username} name='username' />
-        </Form.Group>
-        <Form.Group>
-          <Form.Label>Password</Form.Label>
-          <Form.Control {...password} name='username' />
-        </Form.Group>
-        <Button variant='primary' type='submit'>
-          Login
-        </Button>
-      </Form>
+    <div className='d-flex justify-content-center mt-5'>
+      <Card className='p-3 mt-3 shadow-sm'>
+        <Card.Body>
+          <h1>Login</h1>
+          <Form onSubmit={handleLogin}>
+            <Form.Group>
+              <Form.Label>Username</Form.Label>
+              <Form.Control {...username} name='username' />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>Password</Form.Label>
+              <Form.Control {...password} name='username' />
+            </Form.Group>
+            <Button variant='primary' type='submit'>
+              Login
+            </Button>
+          </Form>
+        </Card.Body>
+      </Card>
     </div>
   );
 };
